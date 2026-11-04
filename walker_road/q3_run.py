@@ -9,7 +9,8 @@ One driver for the whole question, organised as the supervisor's chain:
           support fixity / pad stiffness scenarios at each limit state)
   Step 3b Bilinear rotational stiffness at the girder ends (k1 up to a physical threshold,
           k2 = 0.75 k1 above), the supervisor's rule.
-  Step 4  (later) Removing the effect of the test load (mass, mass-normalised shapes).
+  Step 3c Range of such rules (k2/k1, threshold, which end).
+  Step 4  Removing the effect of the test load (mass, mass-normalised shapes).
 
 Limit states: SLS (1 CL-625 truck per lane), 75 % ULS, ULS (1.70 x 1.25 x 0.90 = 1.91 trucks
 per lane), beyond ULS (3 per lane). Changes are stiffness-only (test-load mass removed); the mass
@@ -17,12 +18,10 @@ effect is step 4.
 
 Run:   python q3_run.py            (about 5 min; needs results/calibration.json)
        python q3_run.py --plots    (figures + summary from existing result files only)
-Out:   results/Q3/Q3_step1_physical_changes.png
-       results/Q3/Q3_step2_oma_response.png
-       results/Q3/Q3_step3_boundary_conditions.png
-       results/Q3/Q3_step3b_rotation_rule.png  (bilinear rotational stiffness k1 -> 0.75 k1)
-       results/Q3/Q3_step3c_rule_range.png     (range: k2/k1 0.5-0.9, threshold SLS-ULS, which end)
-       results/Q3/Q3_summary.md
+Out:   results/Q3/  -- figures (drawn by q3_figures.py) and Q3_summary.md:
+         Q3_step1_physical_changes, Q3_step2_oma_response, Q3_step2b_detection_grid,
+         Q3_step3_boundary_conditions, Q3_step3b_rotation_rule, Q3_step3c_rule_range,
+         Q3_step4a_mass_vs_damage, Q3_step4b_load_removal
 """
 from __future__ import annotations
 
@@ -32,190 +31,12 @@ import textwrap
 import sys
 
 import numpy as np
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
 
 import limit_states as ls
-import measured as ms
+import q3_figures
 
 OUT = "results/Q3"
-LS_COL = {"SLS": "0.55", "75% ULS": "C1", "ULS": "C3", "beyond ULS": "k"}
 MODES = 3                                   # M1, M2, M3 shown
-
-
-def ls_lines(ax, lsd, labels=False):
-    for n, lam in lsd.items():
-        ax.axvline(lam, color=LS_COL[n], lw=1, ls="--")
-        if labels:
-            ax.text(lam, 1.0, " " + n, transform=ax.get_xaxis_transform(), rotation=90, va="top",
-                    ha="right", fontsize=7, color=LS_COL[n])
-
-
-def step1(d):
-    s1 = d["stage1"]
-    it = s1["iteration"]
-    lam = np.array(sorted(float(k) for k in it))
-    g = lambda key, f=lambda v: v: np.array([f(it[k][key]) for k in sorted(it, key=float)])
-    fig, ax = plt.subplots(1, 3, figsize=(14, 3.8))
-    a = ax[0]
-    a.plot(lam, g("cracked_el"), "o-", ms=3, color="C3", label="cracked girder elements (of 210)")
-    a.set_ylabel("cracked girder elements")
-    a2 = a.twinx()
-    a2.plot(lam, 100 * g("min_Ie_ratio"), "s--", ms=3, color="C0", label="lowest I_e / I_g (%)")
-    a2.set_ylabel("lowest I_e / I_g (%)", color="C0")
-    a2.set_ylim(0, 105)
-    a.set_title("Girders: cracking (as-built prestress, CSA S6-19)", fontsize=9)
-    a.legend(loc="center right", fontsize=7)
-    a2.legend(loc="lower right", fontsize=7)
-    b = ax[1]
-    b.plot(lam, g("bearing_contact", min), "o-", ms=3, label="pad contact ratio (1 = no uplift)")
-    b.plot(lam, g("slip_ratio", max), "s-", ms=3, label="H / (μR)  (< 1 = no slip)")
-    b.axhline(1, color="k", lw=0.8)
-    b.set_ylim(0, 1.15)
-    b.set_title("Bearings: uplift and slip checks (14 pads)", fontsize=9)
-    b.legend(fontsize=7)
-    c = ax[2]
-    c.plot(lam, g("soffit_outward_mm"), "o-", ms=3, label="girder soffit moves towards ballast wall")
-    c.plot(lam, g("joint_opening_mm"), "s-", ms=3, label="deck joint OPENS by")
-    c.axhline(it[next(iter(it))]["soffit_clearance_mm"], color="C0", ls=":", label="soffit clearance (≈225 mm)")
-    c.axhline(it[next(iter(it))]["joint_gap_mm"], color="C1", ls=":", label="joint gap (38 mm)")
-    c.set_yscale("log")
-    c.set_ylabel("mm")
-    c.set_title("Bearings: can the girder ends lock?", fontsize=9)
-    c.legend(fontsize=7)
-    for a_ in ax:
-        ls_lines(a_, s1["limit_states"], labels=a_ is ax[0])
-        a_.set_xlabel("λ = CL-625 trucks per lane")
-        a_.grid(alpha=0.3)
-    fig.tight_layout()
-    fig.savefig(f"{OUT}/Q3_step1_physical_changes.png", dpi=150)
-
-
-def step2(d):
-    st = d["stage2"]
-    names = st["names"][:MODES]
-    fig, ax = plt.subplots(1, 2, figsize=(12, 4))
-    for k, n in enumerate(names):
-        for c, lsty in (("jacked", "-"), ("after unload", "--")):
-            rr = [r for r in st["rows"] if r["case"] == c and r["tracked"][k]]
-            lam = [r["lam"] for r in rr]
-            lab = {"jacked": "load on", "after unload": "after unloading"}[c]
-            ax[0].plot(lam, [r["df_pct"][k] for r in rr], lsty, color=f"C{k}", label=f"{n}, {lab}")
-            ax[1].semilogy(lam, [max(1 - r["mac_acc"][k], 1e-6) for r in rr], lsty, color=f"C{k}",
-                           label=f"{n}, {lab}")
-        if n in st["mac_stab_measured"]:
-            ax[1].axhline(1 - st["mac_stab_measured"][n], color=f"C{k}", lw=0.6, ls=":")
-    ax[0].axhspan(-ls.DETECT_PCT, ls.DETECT_PCT, color="0.85", zorder=0)
-    ax[0].set_ylabel("frequency change (%)")
-    ax[0].set_title(f"Frequencies (grey band: ±{ls.DETECT_PCT} % detection limit)", fontsize=9)
-    ax[1].set_ylabel("1 - MAC at the 9 accelerometers")
-    ax[1].set_ylim(1e-6, 0.2)
-    ax[1].set_title("Mode shapes (dotted: measured MAC scatter of each mode)", fontsize=9)
-    for a_ in ax:
-        ls_lines(a_, d["stage1"]["limit_states"], labels=a_ is ax[0])
-        a_.set_xlabel("λ = CL-625 trucks per lane")
-        a_.grid(alpha=0.3, which="both")
-        a_.legend(fontsize=7)
-    fig.tight_layout()
-    fig.savefig(f"{OUT}/Q3_step2_oma_response.png", dpi=150)
-
-
-def step3(bc):
-    lsn = list(dict.fromkeys(v["limit_state"] for v in bc.values()))
-    scn = list(dict.fromkeys(v["scenario"] for v in bc.values()))
-    fig, ax = plt.subplots(1, 3, figsize=(15, 4.2))
-    x = np.arange(len(scn))
-    uls = [bc[f"ULS | {s}"] for s in scn]
-    ax[0].bar(x - 0.2, [v["oma_change"]["df_pct"][0] for v in uls], 0.4, label="M1 frequency change (%)")
-    ax[0].bar(x + 0.2, [100 * (1 - min(v["oma_change"]["mac"])) for v in uls], 0.4,
-              label="100 x (1 - lowest MAC), 9 accelerometers")
-    ax[0].set_xticks(x, [textwrap.fill(s, 12) for s in scn], fontsize=7)
-    ax[0].set_title("What OMA shows at ULS for each support scenario", fontsize=9)
-    ax[0].legend(fontsize=7)
-    for s_i, s in enumerate(scn):
-        for l in lsn:
-            v = bc[f"{l} | {s}"]
-            for end, mk in (("N", "o"), ("S", "s")):
-                ax[1].scatter(v[f"fix_{end}"] + 0.012 * (s_i - 2), v["identified"][f"fix_{end}"], marker=mk,
-                              color=f"C{s_i}", s=18, label=s if (l == lsn[0] and end == "N") else None)
-    ax[1].plot([0, 1], [0, 1], "k-", lw=0.8)
-    ax[1].set_xlabel("true end fixity (o north, s south)")
-    ax[1].set_ylabel("fixity found by calibration")
-    ax[1].set_title("Does calibration recover the supports? (all limit states)", fontsize=9)
-    ax[1].legend(fontsize=6)
-    w = 0.8 / len(lsn)
-    for l_i, l in enumerate(lsn):
-        ax[2].bar(x + (l_i - (len(lsn) - 1) / 2) * w, [bc[f"{l} | {s}"]["identified"]["Eg_change_pct"] for s in scn],
-                  w, color=LS_COL[l], label=l)
-    ax[2].set_xticks(x, [textwrap.fill(s, 12) for s in scn], fontsize=7)
-    ax[2].set_ylabel("%")
-    ax[2].set_title("Girder modulus change the calibration reports (true: 0)", fontsize=9)
-    ax[2].legend(fontsize=7)
-    for a_ in ax:
-        a_.grid(alpha=0.3)
-    fig.tight_layout()
-    fig.savefig(f"{OUT}/Q3_step3_boundary_conditions.png", dpi=150)
-
-
-def step3b(rr):
-    names = list(rr["cases"])
-    lam = np.array(rr["lams"])
-    fig, ax = plt.subplots(2, len(names), figsize=(14, 6), sharex=True, sharey="row")
-    for c, n in enumerate(names):
-        for rule, lsty in (("without rule", "--"), ("with rule", "-")):
-            r = rr["cases"][n][rule]
-            for k, col in zip(range(3), ("C0", "C1", "C2")):
-                ax[0, c].plot(lam, [x[k] for x in r["df_pct"]], lsty, color=col,
-                              label=f"M{k + 1 if k < 2 else 3}, {rule}" if c == 0 else None)
-                ax[1, c].semilogy(lam, [max(1 - x[k], 1e-6) for x in r["mac"]], lsty, color=col)
-        for a_ in ax[:, c]:
-            a_.axvline(rr["lam_threshold"], color="m", lw=1.2, label="threshold (first girder cracking)"
-                       if (c == 0 and a_ is ax[0, 0]) else None)
-            ls_lines(a_, rr["limit_states"])
-            a_.grid(alpha=0.3, which="both")
-        ax[0, c].axhspan(-ls.DETECT_PCT, ls.DETECT_PCT, color="0.85", zorder=0)
-        ax[0, c].set_title(n, fontsize=9)
-        ax[1, c].set_xlabel("λ = CL-625 trucks per lane")
-    ax[0, 0].set_ylabel("frequency change (%)")
-    ax[1, 0].set_ylabel("1 - MAC (9 accelerometers)")
-    ax[0, 0].legend(fontsize=6)
-    fig.suptitle(f"Bilinear rotational stiffness at the girder ends: k1 up to the threshold, "
-                 f"k2 = {rr['k2_ratio']} k1 above it", fontsize=10)
-    fig.tight_layout()
-    fig.savefig(f"{OUT}/Q3_step3b_rotation_rule.png", dpi=150)
-
-
-def step3c(rr):
-    rg = rr["range"]
-    lsn = list(rr["limit_states"])
-    k1n = list(rg["rows"])
-    fig, ax = plt.subplots(2, len(k1n), figsize=(14, 6.2), sharey="row")
-    x = np.arange(len(lsn))
-    for c, k1 in enumerate(k1n):
-        rows = rg["rows"][k1]
-        for k, col in zip(range(3), ("C0", "C1", "C2")):
-            lo = [min(r["df"][k] for r in rows if r["limit_state"] == l) for l in lsn]
-            hi = [max(r["df"][k] for r in rows if r["limit_state"] == l) for l in lsn]
-            nr = [next(r["no_rule"]["df"][k] for r in rows if r["limit_state"] == l) for l in lsn]
-            off = (k - 1) * 0.22
-            ax[0, c].vlines(x + off, lo, hi, color=col, lw=6, alpha=0.5, label=f"M{k + 1}: range of rules" if c == 0 else None)
-            ax[0, c].plot(x + off, nr, "k_", ms=14, mew=2, label="no rule (cracking only)" if (c == 0 and k == 0) else None)
-            m_lo = [max(1 - min(r["mac"][k] for r in rows if r["limit_state"] == l), 1e-6) for l in lsn]
-            ax[1, c].semilogy(x + off, m_lo, "o", color=col, label=f"M{k + 1}" if c == 0 else None)
-        ax[0, c].axhspan(-ls.DETECT_PCT, ls.DETECT_PCT, color="0.85", zorder=0)
-        ax[0, c].set_title(f"k1 = {k1}", fontsize=9)
-        for a_ in ax[:, c]:
-            a_.set_xticks(x, lsn, fontsize=8)
-            a_.grid(alpha=0.3, which="both")
-    ax[0, 0].set_ylabel("frequency change (%)")
-    ax[1, 0].set_ylabel("largest 1 - MAC (9 accelerometers)")
-    ax[0, 0].legend(fontsize=7)
-    ax[1, 0].legend(fontsize=7)
-    fig.suptitle("Range of support rules: k2/k1 = " + ", ".join(str(a) for a in rg["alphas"])
-                 + "; threshold at SLS / 75 % ULS / ULS; both ends, north or south end", fontsize=10)
-    fig.tight_layout()
-    fig.savefig(f"{OUT}/Q3_step3c_rule_range.png", dpi=150)
 
 
 def step3c_text(rr):
@@ -241,37 +62,6 @@ def step3c_text(rr):
           "scatter of M1 (0.998). Support softening is therefore mainly a frequency signal, with a small "
           "mode-shape signal when one end softens more than the other.", ""]
     return L
-
-
-def step4(lr):
-    rows = lr["rows"]
-    lam = [r["lam"] for r in rows]
-    fig, ax = plt.subplots(1, 3, figsize=(15, 4))
-    for k, col in zip(range(3), ("C0", "C1", "C2")):
-        n = lr["names"][k]
-        ax[0].plot(lam, [r["df_loaded"][k] for r in rows], ":", color=col, label=f"{n} measured with load on")
-        ax[0].plot(lam, [r["df_target"][k] for r in rows], "-", color=col, lw=2.5, alpha=0.4,
-                   label=f"{n} true (no load mass)")
-        ax[0].plot(lam, [r["df_F2"][k] for r in rows], "--", color=col, label=f"{n} corrected (model ratio)")
-        ax[1].plot(lam, [abs(r["err_F1"][k]) for r in rows], "-", color=col, label=f"{n} Rayleigh (mass-normalised shapes)")
-        ax[1].plot(lam, [abs(r["err_F2"][k]) for r in rows], "--", color=col, label=f"{n} model ratio")
-        ax[2].semilogy(lam, [max(1 - r["mac_loaded"][k], 1e-6) for r in rows], ":", color=col, label=f"{n} no correction")
-        ax[2].semilogy(lam, [max(1 - r["mac_S1"][k], 1e-6) for r in rows], "-", color=col, label=f"{n} perturbation")
-        ax[2].semilogy(lam, [max(1 - r["mac_S2"][k], 1e-6) for r in rows], "--", color=col, label=f"{n} model subtraction")
-    ax[1].axhline(ls.DETECT_PCT, color="k", lw=0.8, ls=":")
-    ax[0].set_ylabel("frequency change (%)")
-    ax[0].set_title("Frequencies: measured with load, true, corrected", fontsize=9)
-    ax[1].set_ylabel("|error of corrected frequency| (%)")
-    ax[1].set_title(f"Frequency correction error (dotted: {ls.DETECT_PCT} % detection limit)", fontsize=9)
-    ax[2].set_ylabel("1 - MAC to the true shape (9 accelerometers)")
-    ax[2].set_title("Mode shapes: removing the mass effect", fontsize=9)
-    for a_ in ax:
-        ls_lines(a_, lr["limit_states"])
-        a_.set_xlabel("λ = CL-625 trucks per lane")
-        a_.grid(alpha=0.3, which="both")
-        a_.legend(fontsize=5.5)
-    fig.tight_layout()
-    fig.savefig(f"{OUT}/Q3_step4_load_removal.png", dpi=150)
 
 
 def step4_text(lr):
@@ -363,7 +153,7 @@ def summary(d, bc, rr=None, lr=None):
           ] + (step3b_text(rr) if rr else []) + (step3c_text(rr) if rr and "range" in rr else []) + [
           ] + (step4_text(lr) if lr else []) + [
           "Figures: `Q3_step1_physical_changes.png`, `Q3_step2_oma_response.png`, "
-          "`Q3_step3_boundary_conditions.png`, `Q3_step3b_rotation_rule.png`, `Q3_step3c_rule_range.png`, `Q3_step4_load_removal.png`."]
+          "`Q3_step2b_detection_grid.png`, `Q3_step3_boundary_conditions.png`, `Q3_step3b_rotation_rule.png`, `Q3_step3c_rule_range.png`, `Q3_step4a_mass_vs_damage.png`, `Q3_step4b_load_removal.png`."]
     open(f"{OUT}/Q3_summary.md", "w").write("\n".join(L) + "\n")
 
 
@@ -391,27 +181,17 @@ def main():
     os.makedirs(OUT, exist_ok=True)
     if "--plots" not in sys.argv:
         import bc_identification
+        import q3_load_removal
         import q3_rotation_rule
         ls.main()
         bc_identification.main()
         q3_rotation_rule.main()
-        import q3_load_removal
         q3_load_removal.main()
     d = json.load(open("results/limit_states.json"))
     bc = json.load(open("results/bc_identification.json"))
-    step1(d)
-    step2(d)
-    step3(bc)
-    rr_path = f"{OUT}/q3_rotation_rule.json"
-    rr = json.load(open(rr_path)) if os.path.exists(rr_path) else None
-    if rr:
-        step3b(rr)
-        if "range" in rr:
-            step3c(rr)
-    lr_path = f"{OUT}/q3_load_removal.json"
-    lr = json.load(open(lr_path)) if os.path.exists(lr_path) else None
-    if lr:
-        step4(lr)
+    rr = json.load(open(f"{OUT}/q3_rotation_rule.json")) if os.path.exists(f"{OUT}/q3_rotation_rule.json") else None
+    lr = json.load(open(f"{OUT}/q3_load_removal.json")) if os.path.exists(f"{OUT}/q3_load_removal.json") else None
+    q3_figures.make_all(d, bc, rr, lr, OUT)
     summary(d, bc, rr, lr)
     print(open(f"{OUT}/Q3_summary.md").read())
 

@@ -1,1 +1,3 @@
 __pycache__/
+*.log
+results/sensors_model_frame.csv

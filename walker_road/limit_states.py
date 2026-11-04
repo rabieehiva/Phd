@@ -22,8 +22,8 @@ Stage 2: modal analysis of each converged state, mode tracking by MAC, detectabi
            "jacked (tangent)" - I_cr over the whole cracked length (lower bound),
            "after unload"     - no load, cracks closed by the prestress, residual stiffness only.
 
-Run:  python limit_states.py            (needs results/calibration.json from run_calibration.py)
-Out:  results/limit_states.json, results/limit_states.png
+Run:  python limit_states.py   (normally via q3_run.py; needs results/calibration.json)
+Out:  results/limit_states.json  (figures are drawn by q3_run.py)
 """
 from __future__ import annotations
 
@@ -87,9 +87,7 @@ GAUGE = 1.8
 # Lanes (Dwg 1/18, West structure, eastbound = southbound): from the west edge, barrier 0.555,
 # shoulder 3.0, two 3.7 m lanes, shoulder 2.0, barrier 0.555. Model y: G4 at 0.
 Y_WEST_EDGE = wg.Y_GIRDER[0] - wg.OVERHANG
-LANE_C_ALL = {"west": Y_WEST_EDGE + 0.555 + 3.0 + 1.85, "east": Y_WEST_EDGE + 0.555 + 3.0 + 3.7 + 1.85}
-LANE_C = list(LANE_C_ALL.values())   # default: both lanes loaded; set by --lanes west|east|both
-SUFFIX = ""
+LANE_C = [Y_WEST_EDGE + 0.555 + 3.0 + 1.85, Y_WEST_EDGE + 0.555 + 3.0 + 3.7 + 1.85]   # both lanes loaded
 X_NODES = np.linspace(0, wg.L_SPAN, wg.N_SEG + 1)
 
 
@@ -700,111 +698,9 @@ def main():
     out["stage2"] = dict(names=names, families=[list(f) for f in fams], f_ref=f_ref.tolist(), rows=rows,
                          mac_stab_measured=mac_stab, accelerometers=sensors()["acc"].sensor.tolist(),
                          gauges=sensors()["sg"].sensor.tolist())
-    with open(f"results/limit_states{SUFFIX}.json", "w") as fh:
+    with open("results/limit_states.json", "w") as fh:
         json.dump(out, fh, indent=1, default=float)
-    plot(out)
-
-
-def plot(out):
-    import matplotlib
-    matplotlib.use("Agg")
-    import matplotlib.pyplot as plt
-    st = out["stage2"]
-    names = st["names"][:5]
-    fig, axs = plt.subplots(2, len(names), figsize=(3.2 * len(names), 6.4), sharex=True, sharey=True)
-    top = [("jacked", "df_pct", "-"), ("jacked (tangent)", "df_pct", ":"),
-           ("under load", "df_stiffness_pct", "--"), ("after unload", "df_pct", "-.")]
-    bot = [("mass only", "df_pct", "-"), ("under load", "df_pct", "--")]
-    for k, n in enumerate(names):
-        for row_ax, series in ((axs[0, k], top), (axs[1, k], bot)):
-            for c, fld, ls in series:
-                rr = [r for r in st["rows"] if r["case"] == c and r["tracked"][k]]
-                lab = c + (" / mass only" if fld == "df_stiffness_pct" else "")
-                row_ax.plot([r["lam"] for r in rr], [r[fld][k] for r in rr], ls, marker="o", ms=3, label=lab)
-            row_ax.axhspan(-DETECT_PCT, DETECT_PCT, color="0.85", zorder=0)
-            row_ax.axvline(min(out["stage1"]["lam_crack"]), color="k", lw=0.6)
-            row_ax.axvline(out["stage1"]["deck"]["lam_crack"], color="0.5", lw=0.6, ls="--")
-            row_ax.grid(alpha=0.3)
-        axs[0, k].set_title(f"{n} ({st['f_ref'][k]:.2f} Hz)")
-        axs[1, k].set_xlabel("λ (CL-625 trucks per lane)")
-    axs[0, 0].set_ylabel("Δf (%) - stiffness change only")
-    axs[1, 0].set_ylabel("Δf (%) - with test-load mass")
-    axs[0, 0].legend(fontsize=6)
-    axs[1, 0].legend(fontsize=6)
-    fig.tight_layout()
-    fig.savefig(f"results/limit_states{SUFFIX}.png", dpi=150)
-
-    # --- accelerometer OMA only: mode-shape change vs the measured MAC stability -------------
-    fig, axs = plt.subplots(1, 3, figsize=(11, 3.6), sharey=True)
-    for k, ax in enumerate(axs):
-        n = st["names"][k]
-        for c, col in (("jacked", "C0"), ("after unload", "C3")):
-            rr = [r for r in st["rows"] if r["case"] == c and r["tracked"][k]]
-            ax.semilogy([r["lam"] for r in rr], [max(1 - r["mac_acc"][k], 1e-6) for r in rr], "-o", ms=3,
-                        color=col, label=f"{c}: 1 - MAC")
-            ax.semilogy([r["lam"] for r in rr], [max(1 - min(r["comac_acc"]), 1e-6) for r in rr], ":", color=col,
-                        label=f"{c}: 1 - min COMAC (5 modes)")
-        if n in st["mac_stab_measured"]:
-            ax.axhline(1 - st["mac_stab_measured"][n], color="k", lw=0.8, ls="--", label="measured MAC scatter")
-        ax.axvline(min(out["stage1"]["lam_crack"]), color="k", lw=0.6)
-        ax.set_title(f"{n} - 9 accelerometers")
-        ax.set_xlabel("λ (CL-625 trucks per lane)")
-        ax.grid(alpha=0.3, which="both")
-    axs[0].set_ylabel("mode-shape change")
-    axs[0].legend(fontsize=6)
-    fig.tight_layout()
-    fig.savefig(f"results/limit_states_shapes{SUFFIX}.png", dpi=150)
-
-    # --- does the structure change, and can accelerometer OMA see it? ----------------------
-    # grid: rows = indicators, columns = load level; cell value printed, colour = detectable
-    from matplotlib.colors import ListedColormap
-    STRAIN_MIN = 1.0                                    # % bending change counted as "real change"
-    fig, axs = plt.subplots(2, 1, figsize=(12, 6.2))
-    for ax, c in zip(axs, ("jacked", "after unload")):
-        rr = [r for r in st["rows"] if r["case"] == c]
-        lam = [r["lam"] for r in rr]
-        labels, vals, flags = [], [], []
-        labels.append("REAL CHANGE: girder bending\nat strain gauges (%)")
-        v = [max(r["dkappa_max_pct"][:3]) for r in rr]
-        vals.append(v)
-        flags.append([2 if x >= STRAIN_MIN else 0 for x in v])
-        for k in range(3):
-            n = st["names"][k]
-            labels.append(f"OMA frequency {n}\n|Δf| (%), limit {DETECT_PCT}%")
-            v = [abs(r["df_pct"][k]) for r in rr]
-            vals.append(v)
-            flags.append([1 if x >= DETECT_PCT else 0 for x in v])
-        for k in range(3):
-            n = st["names"][k]
-            thr = 1 - st["mac_stab_measured"].get(n, 0.999)
-            labels.append(f"OMA mode shape {n}\n1-MAC (x1000), limit {1000 * thr:.0f}")
-            v = [1000 * (1 - r["mac_acc"][k]) for r in rr]
-            vals.append(v)
-            flags.append([1 if x >= 1000 * thr else 0 for x in v])
-        ax.imshow(np.array(flags), cmap=ListedColormap(["0.9", "#7fc97f", "#fdc086"]), vmin=0, vmax=2, aspect="auto")
-        for i, row in enumerate(vals):
-            for j, x in enumerate(row):
-                ax.text(j, i, f"{abs(x):.1f}", ha="center", va="center", fontsize=6.5)
-        ax.set_yticks(range(len(labels)), labels, fontsize=7)
-        ax.set_xticks(range(len(lam)), [f"{x:g}" for x in lam], fontsize=7)
-        ax.axhline(0.5, color="k", lw=1.2)
-        j_cr = int(np.searchsorted(lam, min(out["stage1"]["lam_crack"])))
-        ax.axvline(j_cr - 0.5, color="k", lw=0.8, ls="--")
-        ax.set_title({"jacked": "Load ON (cracks open; load mass removed)",
-                      "after unload": "AFTER UNLOADING (cracks closed by prestress = permanent damage)"}[c],
-                     fontsize=9, loc="left")
-    axs[1].set_xlabel("λ = CL-625 trucks per lane (dashed line: first girder cracking)")
-    fig.text(0.01, 0.005, "orange = the structure has really changed (bending at the gauges > 1 %);  "
-             "green = accelerometer OMA can detect it;  grey = OMA cannot detect it", fontsize=8)
-    fig.tight_layout(rect=(0, 0.03, 1, 1))
-    fig.savefig(f"results/limit_states_strain_vs_oma{SUFFIX}.png", dpi=150)
 
 
 if __name__ == "__main__":
-    import sys
-    if "--lanes" in sys.argv:
-        which = sys.argv[sys.argv.index("--lanes") + 1]
-        if which != "both":
-            LANE_C = [LANE_C_ALL[which]]
-            SUFFIX = f"_{which}_lane"
     main()

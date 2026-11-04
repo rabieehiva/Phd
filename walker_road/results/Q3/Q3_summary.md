@@ -78,4 +78,4 @@ OMA measured with the test load on the bridge sees the damage AND the added mass
 
 **Answer:** the test-load mass hides the damage (M1 about −12 % per truck pair, against −0.05 % from cracking at ULS). Dividing out the mass effect predicted by the calibrated model recovers the true frequencies within 0.5 % and the true mode shapes (MAC ≥ 0.98) up to beyond ULS. The simpler Rayleigh correction with mass-normalised shapes works for light loads (error < 0.5 % up to about one truck per lane) but grows to 1–2.5 % for heavy loads, because the heavy mass also changes the shapes.
 
-Figures: `Q3_step1_physical_changes.png`, `Q3_step2_oma_response.png`, `Q3_step3_boundary_conditions.png`, `Q3_step3b_rotation_rule.png`, `Q3_step3c_rule_range.png`, `Q3_step4_load_removal.png`.
+Figures: `Q3_step1_physical_changes.png`, `Q3_step2_oma_response.png`, `Q3_step2b_detection_grid.png`, `Q3_step3_boundary_conditions.png`, `Q3_step3b_rotation_rule.png`, `Q3_step3c_rule_range.png`, `Q3_step4a_mass_vs_damage.png`, `Q3_step4b_load_removal.png`.

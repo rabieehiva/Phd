@@ -160,8 +160,8 @@ code, .mono { font-family: var(--mono); font-size: 0.88em; }
   <tr><td>Beyond ULS</td><td class="num">3.00</td><td class="num">76</td><td class="num">68 %</td><td class="num">1.00</td><td class="num">0.03</td><td class="num">2.2 / 225 mm</td><td>opens 1.5 mm</td></tr>
 </table></div>
 <figure>
-  <img src="img/step1.png" alt="Three panels against load level: cracked girder elements and lowest stiffness ratio; pad contact ratio and slip ratio; girder-end movements against joint gap and clearance">
-  <figcaption><b>Figure 1.</b> What physically changes with load. Left: cracking starts at λ = 1.87 and spreads; the lowest local stiffness falls to about 30 % near capacity. Middle: pads stay in full contact and far from slipping. Right: the girder-end movements stay one to two orders of magnitude below the joint gap and the clearance. Dashed lines mark SLS, 75 % ULS, ULS and beyond ULS.</figcaption>
+  <img src="../results/Q3/Q3_step1_physical_changes.png" alt="Three panels against load level: cracked girder elements and lowest stiffness ratio; pad contact ratio and slip ratio; girder-end movements against joint gap and clearance">
+  <figcaption><b>Figure 1.</b> What physically changes with load. Left: share of girder length cracked and lowest local stiffness; cracking starts at λ = 1.87 and the lowest stiffness falls to about 30 % near capacity. Middle: pads stay in full contact and far from slipping. Right: the girder-end movements stay one to two orders of magnitude below the joint gap and the clearance. Dashed lines mark SLS, 75 % ULS, ULS and beyond ULS.</figcaption>
 </figure>
 <div class="answer"><b>Answer to step 1.</b> Yes, but only the girders change: they just start to crack at ULS, and the stiffness loss spreads quickly above it. The bearings do not lift, slip or lock up to the flexural resistance, so the boundary conditions do not change with load at Walker Road.</div>
 </section>
@@ -184,12 +184,12 @@ code, .mono { font-family: var(--mono); font-size: 0.88em; }
   <tr><td>Beyond ULS</td><td class="num warn">−5.50 %</td><td class="num warn">−3.00 %</td><td class="num warn">−2.97 %</td><td class="num warn">0.976</td><td class="num warn">0.984</td><td class="num">1.000</td><td class="num">−0.51 %</td></tr>
 </table></div>
 <figure>
-  <img src="img/step2.png" alt="Frequency change and 1 minus MAC of M1 to M3 against load level, with load on and after unloading">
+  <img src="../results/Q3/Q3_step2_oma_response.png" alt="Frequency change and 1 minus MAC of M1 to M3 against load level, with load on and after unloading">
   <figcaption><b>Figure 2.</b> OMA response to the physical changes (stiffness only). Left: frequencies; the grey band is the ±0.5 % detection limit. Right: mode-shape change at the 9 accelerometers (1 − MAC, log scale); dotted lines are the measured MAC scatter of each mode.</figcaption>
 </figure>
 <div class="text"><p>The detection grid below puts the same results side by side with the "real" change in the girders (the bending at the strain-gauge positions), to show where the structure has changed but OMA cannot tell.</p></div>
 <figure>
-  <img src="img/detection_grid.png" alt="Grid of load levels against indicators; orange marks real change, green marks detectable by OMA, grey not detectable">
+  <img src="../results/Q3/Q3_step2b_detection_grid.png" alt="Grid of load levels against indicators; orange marks real change, green marks detectable by OMA, grey not detectable">
   <figcaption><b>Figure 3.</b> Does the structure change (orange, top row) and can accelerometer OMA see it (green)? Top block: load on. Bottom block: after unloading. Between about λ = 2.5 and 3 after unloading, the girders have changed but OMA frequencies and shapes do not show it yet.</figcaption>
 </figure>
 <div class="answer"><b>Answer to step 2.</b> At SLS to ULS, only M3 changes detectably (1–2 %), and that is local deck cracking, which has most likely already happened under traffic. The onset of girder cracking at ULS is invisible to OMA. Beyond ULS, M1 drops about 5 % with the load on and the shapes change beyond the measured scatter. After unloading, the prestress closes the cracks and frequencies recover to within 0.5 % until about λ = 3. Frequencies are the better indicator; accelerometer mode shapes react later and less.</div>
@@ -210,7 +210,7 @@ code, .mono { font-family: var(--mono); font-size: 0.88em; }
   <tr><td>South pads twice as stiff</td><td class="num">+0.7 %</td><td class="num">0.990</td><td class="num">0 / 0</td><td class="num">0 / 0</td><td class="num">1 / 2</td><td class="num">1.20 / 1.47</td><td class="num">−1.4 %</td></tr>
 </table></div>
 <figure>
-  <img src="img/step3.png" alt="Bar charts of OMA change per support scenario, scatter of true against identified fixity, and bars of the reported girder modulus change">
+  <img src="../results/Q3/Q3_step3_boundary_conditions.png" alt="Bar charts of OMA change per support scenario, scatter of true against identified fixity, and bars of the reported girder modulus change">
   <figcaption><b>Figure 4.</b> Left: what OMA shows at ULS for each support scenario (M1 frequency change and mode-shape change). Middle: fixity found by calibration against the true fixity (circles north, squares south; on the line = correct). Right: the girder-modulus change the calibration reports, although E<sub>g</sub> did not change.</figcaption>
 </figure>
 <div class="answer"><b>Answer to step 3.</b> A change in support fixity is very visible to OMA: one half-fixed end raises M1 by 20 % and drops the MAC to 0.88, far more than girder cracking. The calibration finds <i>which</i> end changed, but not <i>how much</i>: it overestimates the fixity and compensates with a girder-modulus drop of 8–31 % that is not real. Pad vertical stiffness is hard to identify, and beyond ULS some of the girder cracking is wrongly assigned to the pads. With 9 accelerometers, support stiffness and girder stiffness cannot be cleanly separated, which is the same trade-off seen in the supervisor's paper (E changing together with the fixities).</div>
@@ -232,7 +232,7 @@ code, .mono { font-family: var(--mono); font-size: 0.88em; }
   <tr><td>North end half-fixed</td><td class="num">−0.04 %</td><td class="num">−2.26 %</td><td class="num warn">−2.23 %</td><td class="num">1.000</td></tr>
 </table></div>
 <figure>
-  <img src="img/step3b.png" alt="Frequency change and mode-shape change against load level with and without the bilinear rule, for three support cases">
+  <img src="../results/Q3/Q3_step3b_rotation_rule.png" alt="Frequency change and mode-shape change against load level with and without the bilinear rule, for three support cases">
   <figcaption><b>Figure 5.</b> Bilinear rule (solid) against no rule (dashed). The magenta line is the threshold. With half-fixed ends the frequencies drop in one step at the threshold; with the ends as built nothing happens.</figcaption>
 </figure>
 <div class="text">
@@ -246,7 +246,7 @@ code, .mono { font-family: var(--mono); font-size: 0.88em; }
   <tr><td>Half-fixed</td><td class="num">0 to −8.7 %</td><td class="num">−0.8 to −8.8 %</td><td class="num">−4.2 to −12.3 %</td><td class="num">0.998</td></tr>
 </table></div>
 <figure>
-  <img src="img/step3c.png" alt="Ranges of frequency change and largest mode-shape change at each limit state for three starting supports">
+  <img src="../results/Q3/Q3_step3c_rule_range.png" alt="Ranges of frequency change and largest mode-shape change at each limit state for three starting supports">
   <figcaption><b>Figure 6.</b> Spread of the OMA change over all 36 rules (coloured bars) against cracking alone (black dash). Bottom: the largest mode-shape change at the 9 accelerometers.</figcaption>
 </figure>
 <div class="answer"><b>Answer to steps 3b and 3c.</b> With Walker Road's supports as built, no softening rule makes a difference: the ends are already practically pinned. If the ends carried some fixity, a softening rule could lower M1 by up to 7–9 % already between SLS and ULS, far more than girder cracking. Mode shapes change much less (lowest MAC 0.993, only just beyond the measured scatter), so support softening is mainly a frequency signal.</div>
@@ -258,8 +258,8 @@ code, .mono { font-family: var(--mono); font-size: 0.88em; }
 <p>To reach ULS in a real test, a heavy load must sit on the bridge, and OMA then measures the damaged bridge <i>plus</i> that mass. The mass alone changes the frequencies far more than the damage:</p>
 </div>
 <figure>
-  <img src="img/mass_vs_damage.png" alt="Frequency change for five modes; top row stiffness change only, bottom row with the test-load mass">
-  <figcaption><b>Figure 7.</b> Top row: stiffness change only (damage). Bottom row: with the mass of the test load. At λ = 1 the mass alone lowers M1 by about 12 %; at ULS by about 20 %, while the cracking contributes −0.05 %.</figcaption>
+  <img src="../results/Q3/Q3_step4a_mass_vs_damage.png" alt="Frequency change of M1 to M3 for damage only, load mass only and both together">
+  <figcaption><b>Figure 7.</b> Solid: damage only. Dotted: the load's mass only. Dashed: what is measured with the load on (both together). All three panels share the same vertical scale. At λ = 1 the mass alone lowers M1 by about 12 %; at ULS by about 20 %, while the cracking contributes −0.05 %.</figcaption>
 </figure>
 <div class="text">
 <p><b>Goal</b>: recover the modes of the damaged bridge without the added mass, using only what an engineer has: the loaded OMA results, the known load (mass and position) and the calibrated undamaged model. Four corrections were tested:</p>
@@ -278,8 +278,8 @@ code, .mono { font-family: var(--mono); font-size: 0.88em; }
   <tr><td>Beyond ULS</td><td class="num">−5.50 %</td><td class="num">−31.4 %</td><td class="num">−2.27 %</td><td class="num good">−0.45 %</td><td class="num">0.859</td><td class="num">0.814</td><td class="num good">0.988</td></tr>
 </table></div>
 <figure>
-  <img src="img/step4.png" alt="Measured, true and corrected frequencies; correction errors; and mode-shape error before and after correction against load level">
-  <figcaption><b>Figure 8.</b> Left: frequencies measured with the load on (dotted), true without the mass (thick, light) and corrected with the model ratio (dashed), which lies on the true curves. Middle: correction error; the Rayleigh correction grows with load, especially for M3. Right: mode-shape error to the true shape; model subtraction (dashed) removes almost all of it.</figcaption>
+  <img src="../results/Q3/Q3_step4b_load_removal.png" alt="Measured, true and corrected frequencies; correction errors; and mode-shape error before and after correction against load level">
+  <figcaption><b>Figure 8.</b> Left: frequencies measured with the load on (dotted), true without the mass (thick, light) and corrected with the model ratio (dashed), which lies on the true curves. Middle: correction error; the Rayleigh correction (dash-dot) grows with load, especially for M3. Right: mode-shape error to the true shape; model subtraction (dashed) removes almost all of it.</figcaption>
 </figure>
 <div class="answer"><b>Answer to step 4.</b> The test-load mass hides the damage, but it can be removed. Dividing out the mass effect predicted by the calibrated model recovers the true frequencies within 0.5 % and the true mode shapes (MAC ≥ 0.988) up to beyond ULS. The simpler Rayleigh correction with mass-normalised shapes works for light loads (error below 0.5 % up to about one truck per lane) but grows to 1–2.5 % for M1 and more for M3 with heavy loads, because a heavy mass also changes the mode shapes it relies on.</div>
 </section>
@@ -333,6 +333,7 @@ code, .mono { font-family: var(--mono); font-size: 0.88em; }
   <li><span class="mono">bc_identification.py</span>: support scenarios and calibration (step 3).</li>
   <li><span class="mono">q3_rotation_rule.py</span>: bilinear rule and range of rules (steps 3b, 3c).</li>
   <li><span class="mono">q3_load_removal.py</span>: mass correction (step 4).</li>
+  <li><span class="mono">q3_figures.py</span>: all report figures, in one style (colour = mode, line style = case).</li>
   <li><span class="mono">walker_grillage.py</span>, <span class="mono">run_calibration.py</span>, <span class="mono">measured.py</span>, <span class="mono">mac_tools.py</span>: model, calibration, OMA data, sensor layout.</li>
 </ul>
 </section>

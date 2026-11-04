@@ -12,7 +12,7 @@ does the calibration recover the support state, and where does it put the girder
 Rotational fixity factor gamma (0 = pin, 1 = fully fixed), the usual measure in boundary-
 condition updating: k_rot = 3 E I gamma / (L (1 - gamma)) per girder end.
 
-Run:  python bc_identification.py      ->  results/bc_identification.json / .png
+Run:  python bc_identification.py   ->  results/bc_identification.json (figure: q3_run.py)
 """
 from __future__ import annotations
 
@@ -155,36 +155,6 @@ def main():
         print(f"{k:42s} {v['cracked_girder_el']:7d} {v['oma_change']['df_pct'][0]:+7.2f} {min(v['oma_change']['mac']):6.3f} |"
               f" {v['fix_N']:4.2f}/{v['fix_S']:4.2f}   {i['fix_N']:4.2f}/{i['fix_S']:4.2f}    "
               f"{v['kv_N']:3.1f}/{v['kv_S']:3.1f}    {i['kv_N']:4.2f}/{i['kv_S']:4.2f}   {i['Eg_change_pct']:+8.1f}")
-    plot(out)
-
-
-def plot(out):
-    import matplotlib
-    matplotlib.use("Agg")
-    import matplotlib.pyplot as plt
-    lsn = list(LIMIT_STATES)
-    scn = list(SCENARIOS)
-    fig, axs = plt.subplots(1, 3, figsize=(15, 4.2))
-    x = np.arange(len(lsn))
-    w = 0.8 / len(scn)
-    for s_i, sc in enumerate(scn):
-        rows = [out[f"{l} | {sc}"] for l in lsn]
-        axs[0].bar(x + s_i * w, [r["identified"]["fix_N"] for r in rows], w, label=sc)
-        axs[0].scatter(x + s_i * w, [r["fix_N"] for r in rows], color="k", marker="_", s=120, zorder=3)
-        axs[1].bar(x + s_i * w, [r["identified"]["fix_S"] for r in rows], w)
-        axs[1].scatter(x + s_i * w, [r["fix_S"] for r in rows], color="k", marker="_", s=120, zorder=3)
-        axs[2].bar(x + s_i * w, [r["identified"]["Eg_change_pct"] for r in rows], w)
-    for ax, t in zip(axs, ("identified fixity, NORTH end (black dash = true)",
-                           "identified fixity, SOUTH end (black dash = true)",
-                           "identified change of girder modulus Eg (%)")):
-        ax.set_xticks(x + 0.4 - w / 2, lsn)
-        ax.set_title(t, fontsize=9)
-        ax.grid(alpha=0.3, axis="y")
-    axs[0].set_ylim(0, 1)
-    axs[1].set_ylim(0, 1)
-    axs[0].legend(fontsize=7)
-    fig.tight_layout()
-    fig.savefig("results/bc_identification.png", dpi=150)
 
 
 if __name__ == "__main__":
