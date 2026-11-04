@@ -33,8 +33,7 @@ SIGMA_MAC = 0.02          # MAC weight
 SHAPE_NOISE = 0.02        # relative noise added to simulated shapes
 K_ROT_PAD = wg.BRG_KV * wg.BRG_A_LONG ** 2 / 12.0
 
-# limit states (lambda = CL-625 trucks per lane, both lanes). CSA ULS truck effect ~ 1.7 x 1.25 = 2.1
-LIMIT_STATES = {"SLS": 1.0, "75% ULS": 1.6, "ULS": 2.1, "beyond ULS": 3.0}
+LIMIT_STATES = ls.LIMIT_STATES          # SLS, 75 % ULS, ULS (= 1.7 x 1.25 x 0.9 trucks/lane), beyond
 # support scenarios: fixity (north, south) and kv factor (north, south) on top of the calibrated state
 SCENARIOS = {
     "supports unchanged": dict(fix=(0.0, 0.0), kv=(1.0, 1.0)),

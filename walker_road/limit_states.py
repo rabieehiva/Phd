@@ -65,6 +65,13 @@ EC_INSITU = 1.3                 # in-situ / S6 Ec ratio used for the modular rat
 N_P = EP / (EC_INSITU * wg.E_GIRDER_S6)
 RES_AT_ULT = 0.84               # residual dynamic stiffness after loading near ultimate (Zhou et al. 2019)
 DETECT_PCT = 0.5                # detection threshold on |df| after temperature compensation (%)
+# Limit states in units of lambda (CL-625 trucks per lane, both lanes): S6-19 ULS combination 1
+# live-load factor 1.70, dynamic load allowance 0.25 (>= 3 axles, 3.8.4.5.3), two-lane modification
+# factor 0.90 (Table 3.8.4.2) -> lambda_ULS = 1.70 x 1.25 x 0.90 = 1.91 (check against your S6 copy).
+LAMBDA_ULS = 1.70 * 1.25 * 0.90
+LIMIT_STATES = {"SLS": 1.0, "75% ULS": 0.75 * LAMBDA_ULS, "ULS": LAMBDA_ULS, "beyond ULS": 3.0}
+JOINT_GAP = 0.038               # strip-seal joint opening at 7 C (Dwg 18/18), m
+SOFFIT_CLEAR = 0.225            # girder end to ballast wall at bearing level: 400 - 175 mm (Dwg 12/18, approx.)
 S_E = wg.S_GIRDER               # equivalent transverse span for S6 5.7.1.2 (Fig. 5.3; c/c used -- verify)
 THETA0 = 0.004                  # bearing rotation from construction tolerance (Dwg 5/18 schedule, rad)
 H_RT = 0.070                    # total rubber thickness: G A / K_s = 0.81 MPa x 0.15 m2 / 1.74 kN/mm (Goodco EL
@@ -449,6 +456,22 @@ def converge_state(p0, gp, lam, m_ref, r_dl):
                 theta=THETA0 + np.abs(rot), h_pad=h_pad)
 
 
+def joint_movement(p, st):
+    """Longitudinal movement of the girder ends from the live-load end rotation (theta - THETA0):
+    the deck/joint level moves towards the span (joint opens) by theta (z_top - z_c), the girder
+    soffit moves towards the ballast wall by theta z_c. Locking would need the joint to close."""
+    th = np.abs(st["theta"] - THETA0)
+    z_top = wg.H_GIRDER + wg.HAUNCH + wg.T_SLAB
+    zc = np.array([wg.girder_section(j in (0, 6), p, side=0 if j == 0 else 1)["zc"] for j in range(7)] * 2)
+    top = th * (z_top - zc)
+    bot = th * zc
+    # sagging end rotation: the joint (deck level) OPENS by `top`; contact could only happen at the
+    # soffit, which moves towards the ballast wall by `bot`
+    return dict(joint_opening_mm=float(1e3 * top.max()), soffit_outward_mm=float(1e3 * bot.max()),
+                joint_gap_mm=1e3 * JOINT_GAP, soffit_clearance_mm=1e3 * SOFFIT_CLEAR,
+                locks=bool(bot.max() >= SOFFIT_CLEAR))
+
+
 def residual_factors(st, gp, lam, lam_cr, lam_u):
     """After unloading: cracks closed by prestress, residual factor on the cracked elements
     interpolated from 1 at first cracking to RES_AT_ULT at the resistance (literature-based)."""
@@ -569,7 +592,7 @@ def main():
     print("\nsecant iteration (girder I_e redistributes the live load):")
     print("  lam   iters  cracked el   G1..G7 midspan M_LL (kN m)                     max M/M_r  max R (kN)"
           "  max theta   kv factor     min contact  max H/(mu R)   [contact 1 = no uplift; H/(mu R) < 1 = no slip]")
-    for lam in sorted(set(np.round(np.r_[lam_grid, min(lam_cr)], 3))):
+    for lam in sorted(set(np.round(np.r_[lam_grid, min(lam_cr), list(LIMIT_STATES.values())], 3))):
         st = converge_state(p0, gp, lam, m_ref, r_dl)
         util = max((gp[j]["m_d"] + st["m_ll"][j]).max() / gp[j]["Mr"] for j in range(7))
         rmax = float((r_dl + st["reac"]).max())
@@ -585,7 +608,7 @@ def main():
         states[float(lam)] = st
     lam_u = [lam_u_lin[j] for j in range(7)]
     out["stage1"] = dict(
-        lam_decomp=lam_0, lam_crack=lam_cr, lam_ult_linear=lam_u_lin, Mr=[gp[j]["Mr"] for j in range(7)],
+        limit_states=LIMIT_STATES, lam_decomp=lam_0, lam_crack=lam_cr, lam_ult_linear=lam_u_lin, Mr=[gp[j]["Mr"] for j in range(7)],
         icr_ratio_mid=[float(gp[j]["icr"][i_mid]) for j in range(7)],
         sig_bot_DP_mid_MPa=[float(gp[j]["sig_dp"][i_mid] / 1e3) for j in range(7)],
         deck=dict(M_ll=m_ll_deck, M_dl=m_dl_deck, M_cr=m_cr_deck, lam_crack=lam_deck),
@@ -595,7 +618,9 @@ def main():
                                 bearing_R=(r_dl + s["reac"]).tolist(), bearing_kv_factor=s["f_kv"].tolist(),
                                 bearing_kr_factor=s["f_kr"].tolist(), bearing_contact=s["contact"].tolist(),
                                 bearing_theta=s["theta"].tolist(), bearing_H=s["h_pad"].tolist(),
-                                slip_ratio=(s["h_pad"] / (MU_PAD * (r_dl + s["reac"]))).tolist())
+                                slip_ratio=(s["h_pad"] / (MU_PAD * (r_dl + s["reac"]))).tolist(),
+                                min_Ie_ratio=float(s["f_el"].min()),
+                                **joint_movement(p0, s))
                    for l, s in states.items()})
 
     # --- Stage 2 ---------------------------------------------------------------------
