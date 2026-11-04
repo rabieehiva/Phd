@@ -37,6 +37,57 @@ CASES = {"ends as they are (pad only)": (0.0, 0.0),
 N_MODES = 5
 
 
+# --- sensitivity range of the rule (full factorial, not random) ---------------------------
+ALPHAS = (0.5, 0.6, 0.75, 0.9)
+K1_CASES = {"pad only (as built)": 0.0, "quarter-fixed": 0.25, "half-fixed": 0.5}
+ENDS = {"both ends": (True, True), "north end": (True, False), "south end": (False, True)}
+
+
+def range_study(p0, gp, m_ref, r_dl, acc):
+    """Every combination of k1 (fixity), alpha = k2/k1, threshold (SLS / 75 % ULS / ULS) and the
+    end(s) that soften, evaluated at the four limit states. Returns the envelope of the OMA change."""
+    lsd = ls.LIMIT_STATES
+    thresholds = {k: v for k, v in lsd.items() if k != "beyond ULS"}
+    states = {}
+    for n, lam in lsd.items():
+        st = ls.converge_state(p0, gp, lam, m_ref, r_dl)
+        states[n] = {**p0, "I_el": st["f_el"], "trans_el": st["trans"]}
+    out = {}
+    for k1_name, gam in K1_CASES.items():
+        base = bc.with_bc(p0, gam, gam, 1.0, 1.0)
+        f0, ph0 = bc.oma(base, acc)
+        f0, ph0 = f0[:N_MODES], ph0[:N_MODES]
+        rows = []
+        for ls_name, lam in lsd.items():
+            p_ls = bc.with_bc(states[ls_name], gam, gam, 1.0, 1.0)
+            f, ph = bc.oma(p_ls, acc)
+            pr = {i: (m_, d_) for i, k, m_, d_ in mt.pair_by_mac(f0, ph0, f, ph, mac_min=0.0, df_max=1.0)}
+            no_rule = dict(df=[100 * pr[i][1] for i in range(N_MODES)], mac=[pr[i][0] for i in range(N_MODES)])
+            for a in ALPHAS:
+                for t_name, t_lam in thresholds.items():
+                    for e_name, (en, es) in ENDS.items():
+                        p = dict(p_ls)
+                        if lam >= t_lam - 1e-6:
+                            kr = np.asarray(p["kr"], float).copy()
+                            if en:
+                                kr[:7] *= a
+                            if es:
+                                kr[7:] *= a
+                            p["kr"] = kr
+                        f, ph = bc.oma(p, acc)
+                        pr = {i: (m_, d_) for i, k, m_, d_ in mt.pair_by_mac(f0, ph0, f, ph, mac_min=0.0, df_max=1.0)}
+                        rows.append(dict(limit_state=ls_name, alpha=a, threshold=t_name, ends=e_name,
+                                         df=[100 * pr[i][1] for i in range(N_MODES)],
+                                         mac=[pr[i][0] for i in range(N_MODES)], no_rule=no_rule))
+        out[k1_name] = rows
+        for ls_name in lsd:
+            rr = [r for r in rows if r["limit_state"] == ls_name]
+            d1 = [r["df"][0] for r in rr]
+            print(f"  {k1_name:20s} {ls_name:10s}: M1 change {min(d1):+6.2f} .. {max(d1):+6.2f} %  "
+                  f"(no rule {rr[0]['no_rule']['df'][0]:+6.2f} %), lowest MAC {min(min(r['mac'][:3]) for r in rr):.3f}")
+    return out
+
+
 def main():
     p0 = wg.calibrated_params()
     ls.LOSS = ls.s6_losses(verbose=False)[0]
@@ -78,6 +129,9 @@ def main():
         out["cases"][name] = res
         k_jump = [a[0] - b[0] for a, b in zip(res["with rule"]["df_pct"], res["without rule"]["df_pct"])]
         print(f"{name:30s}: extra M1 change from the rule above the threshold: {min(k_jump):+.2f} %")
+    print("range of rules (alpha x threshold x ends) at the limit states:")
+    out["range"] = dict(alphas=ALPHAS, k1_cases=K1_CASES, ends=list(ENDS),
+                        rows=range_study(p0, gp, m_ref, r_dl, acc))
     os.makedirs("results/Q3", exist_ok=True)
     with open("results/Q3/q3_rotation_rule.json", "w") as fh:
         json.dump(out, fh, indent=1, default=float)

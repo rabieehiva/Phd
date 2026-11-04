@@ -21,6 +21,7 @@ Out:   results/Q3/Q3_step1_physical_changes.png
        results/Q3/Q3_step2_oma_response.png
        results/Q3/Q3_step3_boundary_conditions.png
        results/Q3/Q3_step3b_rotation_rule.png  (bilinear rotational stiffness k1 -> 0.75 k1)
+       results/Q3/Q3_step3c_rule_range.png     (range: k2/k1 0.5-0.9, threshold SLS-ULS, which end)
        results/Q3/Q3_summary.md
 """
 from __future__ import annotations
@@ -185,6 +186,63 @@ def step3b(rr):
     fig.savefig(f"{OUT}/Q3_step3b_rotation_rule.png", dpi=150)
 
 
+def step3c(rr):
+    rg = rr["range"]
+    lsn = list(rr["limit_states"])
+    k1n = list(rg["rows"])
+    fig, ax = plt.subplots(2, len(k1n), figsize=(14, 6.2), sharey="row")
+    x = np.arange(len(lsn))
+    for c, k1 in enumerate(k1n):
+        rows = rg["rows"][k1]
+        for k, col in zip(range(3), ("C0", "C1", "C2")):
+            lo = [min(r["df"][k] for r in rows if r["limit_state"] == l) for l in lsn]
+            hi = [max(r["df"][k] for r in rows if r["limit_state"] == l) for l in lsn]
+            nr = [next(r["no_rule"]["df"][k] for r in rows if r["limit_state"] == l) for l in lsn]
+            off = (k - 1) * 0.22
+            ax[0, c].vlines(x + off, lo, hi, color=col, lw=6, alpha=0.5, label=f"M{k + 1}: range of rules" if c == 0 else None)
+            ax[0, c].plot(x + off, nr, "k_", ms=14, mew=2, label="no rule (cracking only)" if (c == 0 and k == 0) else None)
+            m_lo = [max(1 - min(r["mac"][k] for r in rows if r["limit_state"] == l), 1e-6) for l in lsn]
+            ax[1, c].semilogy(x + off, m_lo, "o", color=col, label=f"M{k + 1}" if c == 0 else None)
+        ax[0, c].axhspan(-ls.DETECT_PCT, ls.DETECT_PCT, color="0.85", zorder=0)
+        ax[0, c].set_title(f"k1 = {k1}", fontsize=9)
+        for a_ in ax[:, c]:
+            a_.set_xticks(x, lsn, fontsize=8)
+            a_.grid(alpha=0.3, which="both")
+    ax[0, 0].set_ylabel("frequency change (%)")
+    ax[1, 0].set_ylabel("largest 1 - MAC (9 accelerometers)")
+    ax[0, 0].legend(fontsize=7)
+    ax[1, 0].legend(fontsize=7)
+    fig.suptitle("Range of support rules: k2/k1 = " + ", ".join(str(a) for a in rg["alphas"])
+                 + "; threshold at SLS / 75 % ULS / ULS; both ends, north or south end", fontsize=10)
+    fig.tight_layout()
+    fig.savefig(f"{OUT}/Q3_step3c_rule_range.png", dpi=150)
+
+
+def step3c_text(rr):
+    rg = rr["range"]
+    lsn = list(rr["limit_states"])
+    L = ["## Step 3c – Range of support rules (sensitivity)", "",
+         "All combinations of k2/k1 = " + ", ".join(str(a) for a in rg["alphas"])
+         + ", threshold at SLS / 75 % ULS / ULS, and softening at both ends, the north end or the south end "
+         "(" + str(len(rg["alphas"]) * 3 * 3) + " rules per k1), for three starting supports.", "",
+         "| k1 (starting supports) | " + " | ".join(f"M1 Δf at {l}" for l in lsn) + " | lowest MAC (M1–M3), all |",
+         "|---|" + "---|" * (len(lsn) + 1)]
+    for k1, rows in rg["rows"].items():
+        cells = []
+        for l in lsn:
+            v = [r["df"][0] for r in rows if r["limit_state"] == l]
+            cells.append(f"{min(v):+.1f} … {max(v):+.1f} %")
+        L.append(f"| {k1} | " + " | ".join(cells) + f" | {min(min(r['mac'][:3]) for r in rows):.3f} |")
+    L += ["", "**Answer:** with the supports as built (pad only), no rule makes a difference – the ends are "
+          "already practically pinned. If the ends carry some fixity (a quarter to a half), a softening rule "
+          "can lower M1 by up to 7–9 % already at SLS/ULS (depending on α and which end), i.e. far more than "
+          "girder cracking. The mode shapes at the 9 accelerometers change much less (lowest MAC 0.993 for "
+          "quarter-fixed, 0.998 for half-fixed ends, up to ULS), which is only just beyond the measured MAC "
+          "scatter of M1 (0.998). Support softening is therefore mainly a frequency signal, with a small "
+          "mode-shape signal when one end softens more than the other.", ""]
+    return L
+
+
 def summary(d, bc, rr=None):
     s1, st = d["stage1"], d["stage2"]
     it = s1["iteration"]
@@ -251,12 +309,12 @@ def summary(d, bc, rr=None):
           "how much: it over-estimates the fixity and compensates with a girder-modulus drop that is not real. "
           "Pad vertical stiffness is hard to identify, and cracking beyond ULS partly ends up in the pad "
           "stiffness. Support and girder stiffness are therefore not cleanly separable with 9 accelerometers.", "",
-          ] + (step3b_text(rr) if rr else []) + [
+          ] + (step3b_text(rr) if rr else []) + (step3c_text(rr) if rr and "range" in rr else []) + [
           "## Step 4 – Removing the load effect (next)", "",
           "Not done yet. For reference, the test-load mass alone lowers M1 by about "
           f"{-row('mass only', 1.0)['df_pct'][0]:.0f} % per truck pair (λ = 1), far more than the cracking at ULS.",
           "", "Figures: `Q3_step1_physical_changes.png`, `Q3_step2_oma_response.png`, "
-          "`Q3_step3_boundary_conditions.png`, `Q3_step3b_rotation_rule.png`."]
+          "`Q3_step3_boundary_conditions.png`, `Q3_step3b_rotation_rule.png`, `Q3_step3c_rule_range.png`."]
     open(f"{OUT}/Q3_summary.md", "w").write("\n".join(L) + "\n")
 
 
@@ -297,6 +355,8 @@ def main():
     rr = json.load(open(rr_path)) if os.path.exists(rr_path) else None
     if rr:
         step3b(rr)
+        if "range" in rr:
+            step3c(rr)
     summary(d, bc, rr)
     print(open(f"{OUT}/Q3_summary.md").read())
 

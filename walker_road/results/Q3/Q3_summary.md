@@ -53,8 +53,20 @@ Threshold = first girder cracking, λ = 1.87. The physical alternative, the pad'
 
 **Answer:** with the ends as they are (practically pinned) the rule changes nothing (k1 is already tiny). If the ends were partly fixed, the 25 % drop in rotational stiffness lowers M1 by about 2–4 % in one step at the threshold – a detectable jump, larger than the girder cracking at ULS.
 
+## Step 3c – Range of support rules (sensitivity)
+
+All combinations of k2/k1 = 0.5, 0.6, 0.75, 0.9, threshold at SLS / 75 % ULS / ULS, and softening at both ends, the north end or the south end (36 rules per k1), for three starting supports.
+
+| k1 (starting supports) | M1 Δf at SLS | M1 Δf at 75% ULS | M1 Δf at ULS | M1 Δf at beyond ULS | lowest MAC (M1–M3), all |
+|---|---|---|---|---|---|
+| pad only (as built) | -0.1 … -0.0 % | -0.1 … -0.0 % | -0.1 … -0.1 % | -5.6 … -5.5 % | 0.975 |
+| quarter-fixed | -7.0 … -0.0 % | -7.0 … -0.0 % | -7.0 … -0.6 % | -11.2 … -4.7 % | 0.936 |
+| half-fixed | -8.7 … -0.0 % | -8.7 … -0.0 % | -8.8 … -0.8 % | -12.3 … -4.2 % | 0.945 |
+
+**Answer:** with the supports as built (pad only), no rule makes a difference – the ends are already practically pinned. If the ends carry some fixity (a quarter to a half), a softening rule can lower M1 by up to 7–9 % already at SLS/ULS (depending on α and which end), i.e. far more than girder cracking. The mode shapes at the 9 accelerometers change much less (lowest MAC 0.993 for quarter-fixed, 0.998 for half-fixed ends, up to ULS), which is only just beyond the measured MAC scatter of M1 (0.998). Support softening is therefore mainly a frequency signal, with a small mode-shape signal when one end softens more than the other.
+
 ## Step 4 – Removing the load effect (next)
 
 Not done yet. For reference, the test-load mass alone lowers M1 by about 12 % per truck pair (λ = 1), far more than the cracking at ULS.
 
-Figures: `Q3_step1_physical_changes.png`, `Q3_step2_oma_response.png`, `Q3_step3_boundary_conditions.png`, `Q3_step3b_rotation_rule.png`.
+Figures: `Q3_step1_physical_changes.png`, `Q3_step2_oma_response.png`, `Q3_step3_boundary_conditions.png`, `Q3_step3b_rotation_rule.png`, `Q3_step3c_rule_range.png`.
