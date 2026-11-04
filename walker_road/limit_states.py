@@ -78,7 +78,9 @@ GAUGE = 1.8
 # Lanes (Dwg 1/18, West structure, eastbound = southbound): from the west edge, barrier 0.555,
 # shoulder 3.0, two 3.7 m lanes, shoulder 2.0, barrier 0.555. Model y: G4 at 0.
 Y_WEST_EDGE = wg.Y_GIRDER[0] - wg.OVERHANG
-LANE_C = [Y_WEST_EDGE + 0.555 + 3.0 + 1.85, Y_WEST_EDGE + 0.555 + 3.0 + 3.7 + 1.85]
+LANE_C_ALL = {"west": Y_WEST_EDGE + 0.555 + 3.0 + 1.85, "east": Y_WEST_EDGE + 0.555 + 3.0 + 3.7 + 1.85}
+LANE_C = list(LANE_C_ALL.values())   # default: both lanes loaded; set by --lanes west|east|both
+SUFFIX = ""
 X_NODES = np.linspace(0, wg.L_SPAN, wg.N_SEG + 1)
 
 
@@ -645,7 +647,7 @@ def main():
     out["stage2"] = dict(names=names, families=[list(f) for f in fams], f_ref=f_ref.tolist(), rows=rows,
                          mac_stab_measured=mac_stab, accelerometers=sensors()["acc"].sensor.tolist(),
                          gauges=sensors()["sg"].sensor.tolist())
-    with open("results/limit_states.json", "w") as fh:
+    with open(f"results/limit_states{SUFFIX}.json", "w") as fh:
         json.dump(out, fh, indent=1, default=float)
     plot(out)
 
@@ -677,7 +679,7 @@ def plot(out):
     axs[0, 0].legend(fontsize=6)
     axs[1, 0].legend(fontsize=6)
     fig.tight_layout()
-    fig.savefig("results/limit_states.png", dpi=150)
+    fig.savefig(f"results/limit_states{SUFFIX}.png", dpi=150)
 
     # --- accelerometer OMA only: mode-shape change vs the measured MAC stability -------------
     fig, axs = plt.subplots(1, 3, figsize=(11, 3.6), sharey=True)
@@ -698,7 +700,7 @@ def plot(out):
     axs[0].set_ylabel("mode-shape change")
     axs[0].legend(fontsize=6)
     fig.tight_layout()
-    fig.savefig("results/limit_states_shapes.png", dpi=150)
+    fig.savefig(f"results/limit_states_shapes{SUFFIX}.png", dpi=150)
 
     # --- does the structure change, and can accelerometer OMA see it? ----------------------
     # grid: rows = indicators, columns = load level; cell value printed, colour = detectable
@@ -742,8 +744,14 @@ def plot(out):
     fig.text(0.01, 0.005, "orange = the structure has really changed (bending at the gauges > 1 %);  "
              "green = accelerometer OMA can detect it;  grey = OMA cannot detect it", fontsize=8)
     fig.tight_layout(rect=(0, 0.03, 1, 1))
-    fig.savefig("results/limit_states_strain_vs_oma.png", dpi=150)
+    fig.savefig(f"results/limit_states_strain_vs_oma{SUFFIX}.png", dpi=150)
 
 
 if __name__ == "__main__":
+    import sys
+    if "--lanes" in sys.argv:
+        which = sys.argv[sys.argv.index("--lanes") + 1]
+        if which != "both":
+            LANE_C = [LANE_C_ALL[which]]
+            SUFFIX = f"_{which}_lane"
     main()
