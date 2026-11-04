@@ -656,7 +656,7 @@ def plot(out):
     import matplotlib.pyplot as plt
     st = out["stage2"]
     names = st["names"][:5]
-    fig, axs = plt.subplots(2, len(names), figsize=(3.2 * len(names), 6.4), sharex=True)
+    fig, axs = plt.subplots(2, len(names), figsize=(3.2 * len(names), 6.4), sharex=True, sharey=True)
     top = [("jacked", "df_pct", "-"), ("jacked (tangent)", "df_pct", ":"),
            ("under load", "df_stiffness_pct", "--"), ("after unload", "df_pct", "-.")]
     bot = [("mass only", "df_pct", "-"), ("under load", "df_pct", "--")]
