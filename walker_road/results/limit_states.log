@@ -1,112 +1,115 @@
-effective prestress 5520 kN/girder, f_r = 2.53 MPa
-girder  M_LL,mid  sig_bot(D+P)  lam_decomp  lam_crack  lam_ult   Icr/Ic
-  G1       951      -8.40 MPa     3.67       4.77    10.13   0.109
-  G2       731      -7.67 MPa     3.16       4.20    13.05   0.185
-  G3       932      -7.67 MPa     2.45       3.25    10.24   0.185
-  G4      1001      -7.67 MPa     2.28       3.03     9.54   0.185
-  G5      1024      -7.67 MPa     2.24       2.98     9.32   0.185
-  G6       902      -7.67 MPa     2.55       3.39    10.58   0.185
-  G7      1280      -8.40 MPa     2.68       3.49     7.53   0.109
+effective prestress 5520 kN/girder, f_r = 2.53 MPa, n_p = 5.44
+girder  M_LL,mid(l=1)  sig_bot(D+P)  lam_decomp  lam_crack  lam_ult(lin)  Icr/Ig(mid)
+  G1       951        -8.40 MPa     3.67       4.77      10.13       0.196
+  G2       731        -7.67 MPa     3.16       4.20      13.05       0.183
+  G3       932        -7.67 MPa     2.45       3.25      10.24       0.183
+  G4      1001        -7.67 MPa     2.28       3.03       9.54       0.183
+  G5      1024        -7.67 MPa     2.24       2.98       9.32       0.183
+  G6       902        -7.67 MPa     2.55       3.39      10.58       0.183
+  G7      1280        -8.40 MPa     2.68       3.49       7.53       0.196
 deck: local M_LL 18.0 kNm/m per truck, M_DL 2.3, M_cr 14.6 -> lam_deck_crack = 0.68
 bearing pressure under dead load (MPa): [3.07 3.07 3.07 3.07 3.07 3.07 3.07 3.07 3.07 3.07 3.07 3.07 3.07 3.07]
-bearing reaction per lambda (kN): [ 37.7  67.7  84.7  94.9  99.9 101.3  96.9  56.5  93.3 111.9 117.9 113.2
-  99.5  74.6]
-lambda at lift-off (min over pads): inf
+
+secant iteration (girder I_e redistributes the live load):
+  lam   iters  cracked el   G1..G7 midspan M_LL (kN m)                     max M/M_r  min R (kN)
+   0.50    1       0         475    366    466    500    512    451    640      0.332     479.5
+   1.00    1       0         948    732    938   1012   1029    902   1272      0.379     497.7
+   1.50    1       0        1421   1099   1412   1525   1548   1354   1903      0.426     515.9
+   2.00    1       0        1894   1465   1884   2035   2065   1805   2536      0.473     534.1
+   2.50    1       0        2368   1831   2355   2545   2582   2257   3170      0.520     552.4
+   2.98    3       5        2825   2185   2810   3037   3077   2693   3781      0.565     570.1
+   3.00    3       5        2842   2198   2828   3055   3094   2710   3805      0.567     570.7
+   3.50    6      27        3356   2600   3295   3464   3528   3192   4503      0.619     590.8
+   4.00    7      57        3929   3088   3692   3866   3967   3643   5155      0.667     609.9
+   4.50    9      75        4654   3489   4082   4270   4408   4087   5779      0.714     628.9
+   5.00    9      95        5316   3893   4499   4691   4849   4525   6401      0.760     645.2
+   5.50   10     108        5950   4302   4922   5114   5294   4960   7018      0.806     659.6
+   6.00    9     113        6583   4712   5340   5533   5737   5392   7635      0.851     672.8
+   6.50   10     120        7219   5115   5758   5954   6180   5818   8249      0.897     684.6
+   7.00   10     125        7846   5521   6176   6372   6619   6242   8864      0.943     695.2
+   7.50   10     129        8475   5925   6591   6788   7058   6663   9481      0.988     704.8
+   8.00   10     132        9102   6322   7004   7205   7496   7081  10098      1.034     713.1
+  -> flexural resistance reached at lambda = 8.00; stopping
+
 tracked baseline modes: [('M1', np.float64(3.723)), ('M2', np.float64(4.254)), ('M3', np.float64(8.26)), ('M5', np.float64(13.404)), ('M6', np.float64(13.647)), ('FE(2, 2)', np.float64(15.423)), ('FE(1, 3)', np.float64(18.834)), ('FE(2, 3)', np.float64(23.205))]
-lam  0.50 mass only          girder el   0 deck el   0  df%  -6.29  -2.01  -4.62  -5.53  -1.42  -3.34  -6.07  -4.88  minMAC 0.894
-lam  0.50 under load         girder el   0 deck el   0  df%  -6.29  -2.01  -4.62  -5.53  -1.42  -3.34  -6.07  -4.88  minMAC 1.000
-lam  0.50 jacked             girder el   0 deck el   0  df%  -0.00  -0.00  -0.00  -0.00  -0.00  -0.00  -0.00  -0.00  minMAC 1.000
-lam  0.50 jacked (tangent)   girder el   0 deck el   0  df%  -0.00  +0.00  -0.00  -0.00  +0.00  +0.00  -0.00  -0.00  minMAC 1.000
-lam  0.50 after unload       girder el   0 deck el   0  df%  -0.00  -0.00  -0.00  +0.00  -0.00  -0.00  +0.00  +0.00  minMAC 1.000
-           under/mass-only (stiffness part)  df%  +0.00  +0.00  +0.00  +0.00  -0.00  +0.00  -0.00  -0.00
-lam  1.00 mass only          girder el   0 deck el  68  df% -11.69  -3.88  -7.90 -11.13  -2.94  -5.06 -10.90  -8.94  minMAC 0.747
-lam  1.00 under load         girder el   0 deck el  68  df% -11.74  -4.08  -9.25 -11.27  -3.08  -5.42 -12.53 -10.11  minMAC 0.999
-lam  1.00 jacked             girder el   0 deck el  68  df%  -0.02  -0.19  -1.46  -0.04  -0.10  -0.48  -1.74  -1.18  minMAC 0.997
-lam  1.00 jacked (tangent)   girder el   0 deck el  68  df%  -0.02  -0.19  -1.46  -0.04  -0.10  -0.48  -1.74  -1.18  minMAC 0.997
-lam  1.00 after unload       girder el   0 deck el  68  df%  -0.00  -0.00  -0.00  -0.00  +0.00  -0.00  -0.00  -0.00  minMAC 1.000
-           under/mass-only (stiffness part)  df%  -0.05  -0.21  -1.47  -0.15  -0.15  -0.39  -1.83  -1.29
-lam  1.50 mass only          girder el   0 deck el  68  df% -16.35  -5.65 -10.39 -16.16  -4.58  -6.18 -14.79 -12.33  minMAC 0.645
-lam  1.50 under load         girder el   0 deck el  68  df% -16.43  -5.94 -12.14 -16.38  -4.83  -6.65 -16.92 -13.92  minMAC 0.998
-lam  1.50 jacked             girder el   0 deck el  68  df%  -0.02  -0.27  -1.96  -0.05  -0.14  -0.65  -2.34  -1.65  minMAC 0.995
-lam  1.50 jacked (tangent)   girder el   0 deck el  68  df%  -0.02  -0.27  -1.96  -0.05  -0.14  -0.65  -2.34  -1.65  minMAC 0.995
-lam  1.50 after unload       girder el   0 deck el  68  df%  -0.00  -0.00  -0.00  -0.00  -0.00  +0.00  -0.00  -0.00  minMAC 1.000
-           under/mass-only (stiffness part)  df%  -0.09  -0.30  -1.96  -0.26  -0.27  -0.49  -2.50  -1.82
-lam  2.00 mass only          girder el   0 deck el  68  df% -20.40  -7.35 -12.37 -20.53  -6.30  -7.11 -17.96 -15.15  minMAC 0.575
-lam  2.00 under load         girder el   0 deck el  68  df% -20.49  -7.66 -14.18 -20.79  -6.65  -7.61 -20.12 -16.83  minMAC 0.996
-lam  2.00 jacked             girder el   0 deck el  68  df%  -0.03  -0.29  -2.08  -0.06  -0.15  -0.69  -2.49  -1.77  minMAC 0.995
-lam  2.00 jacked (tangent)   girder el   0 deck el  68  df%  -0.03  -0.29  -2.08  -0.06  -0.15  -0.69  -2.49  -1.77  minMAC 0.995
-lam  2.00 after unload       girder el   0 deck el  68  df%  -0.00  -0.00  -0.00  +0.00  -0.00  +0.00  +0.00  -0.00  minMAC 1.000
-           under/mass-only (stiffness part)  df%  -0.12  -0.34  -2.07  -0.32  -0.38  -0.54  -2.63  -1.97
-lam  2.50 mass only          girder el   0 deck el  68  df% -23.94  -8.96 -14.01 -24.34  -8.08  -8.02 -20.50 -17.53  minMAC 0.514
-lam  2.50 under load         girder el   0 deck el  68  df% -24.05  -9.29 -15.82 -24.61  -8.53  -8.67 -22.50 -19.20  minMAC 0.972
-lam  2.50 jacked             girder el   0 deck el  68  df%  -0.03  -0.30  -2.13  -0.06  -0.16  -0.71  -2.55  -1.81  minMAC 0.995
-lam  2.50 jacked (tangent)   girder el   0 deck el  68  df%  -0.03  -0.30  -2.13  -0.06  -0.16  -0.71  -2.55  -1.81  minMAC 0.995
-lam  2.50 after unload       girder el   0 deck el  68  df%  -0.00  -0.00  -0.00  -0.00  +0.00  +0.00  -0.00  -0.00  minMAC 1.000
-           under/mass-only (stiffness part)  df%  -0.14  -0.36  -2.10  -0.36  -0.48  -0.71  -2.51  -2.03
-lam  2.98 mass only          girder el   0 deck el  68  df% -26.96 -10.46 -15.36 -27.56  -9.83  -9.07 -22.38 -19.47  minMAC 0.439
-lam  2.98 under load         girder el   0 deck el  68  df% -27.08 -10.80 -17.15 -27.83 -10.36 -10.16 -23.97 -21.13  minMAC 0.920
-lam  2.98 jacked             girder el   0 deck el  68  df%  -0.03  -0.30  -2.14  -0.06  -0.16  -0.71  -2.57  -1.83  minMAC 0.994
-lam  2.98 jacked (tangent)   girder el   0 deck el  68  df%  -2.06  -0.61  -2.52  -0.10  -0.17  -0.75  -3.03  -1.88  minMAC 0.993
-lam  2.98 after unload       girder el   0 deck el  68  df%  -0.00  -0.00  -0.00  -0.00  -0.00  -0.00  -0.00  -0.00  minMAC 1.000
-           under/mass-only (stiffness part)  df%  -0.16  -0.38  -2.12  -0.38  -0.59  -1.20  -2.05  -2.05
-lam  3.00 mass only          girder el   3 deck el  68  df% -27.07 -10.51 -15.41 -27.67  -9.89  -9.11 -22.44 -19.54  minMAC 0.435
-lam  3.00 under load         girder el   3 deck el  68  df% -27.20 -10.85 -17.20 -27.95 -10.43 -10.23 -24.01 -21.19  minMAC 0.919
-lam  3.00 jacked             girder el   3 deck el  68  df%  -0.04  -0.31  -2.15  -0.06  -0.16  -0.72  -2.58  -1.83  minMAC 0.994
-lam  3.00 jacked (tangent)   girder el   3 deck el  68  df%  -2.59  -0.67  -2.61  -0.21  -0.19  -0.79  -3.14  -1.94  minMAC 0.990
-lam  3.00 after unload       girder el   3 deck el  68  df%  -0.00  -0.00  -0.00  -0.00  -0.00  -0.00  -0.00  -0.00  minMAC 1.000
-           under/mass-only (stiffness part)  df%  -0.18  -0.38  -2.12  -0.38  -0.60  -1.23  -2.03  -2.06
-lam  3.50 mass only          girder el  27 deck el  68  df% -29.85 -12.00 -16.63 -30.61 -11.71 -10.55 -23.75 -21.26  minMAC 0.301
-lam  3.50 under load         girder el  27 deck el  68  df% -31.50 -12.56 -18.55 -31.22 -12.36 +103.31 -28.31 -23.07  minMAC 0.090
-lam  3.50 jacked             girder el  27 deck el  68  df%  -1.82  -0.54  -2.57  -0.25  -0.18  -0.87  -2.76  -1.89  minMAC 0.995
-lam  3.50 jacked (tangent)   girder el  27 deck el  68  df% -26.67  -7.81  -5.82  -5.14  -0.78  -2.93  -4.69  -3.29  minMAC 0.634
-lam  3.50 after unload       girder el  27 deck el  68  df%  -0.08  -0.01  -0.02  -0.01  -0.00  -0.01  -0.01  -0.00  minMAC 1.000
-           under/mass-only (stiffness part)  df%  -2.35  -0.64  -2.31  -0.87  -0.74 +127.30  -5.99  -2.30
-lam  4.00 mass only          girder el  55 deck el  68  df% -32.35 -13.42 -17.71 -33.23 -13.51  -7.90 -28.13 -22.74  minMAC 0.324
-lam  4.00 under load         girder el  55 deck el  68  df% -37.95 -16.22 -20.25 -35.39 -15.06 +92.27 -30.50 -25.16  minMAC 0.105
-lam  4.00 jacked             girder el  55 deck el  68  df%  -7.53  -3.05  -3.42  -1.82  -0.76  -1.66  -3.12  -2.07  minMAC 0.926
-lam  4.00 jacked (tangent)   girder el  55 deck el  68  df% -42.51 -10.57  -6.64 -31.36  -8.80  -6.96  -6.04  -1.29  minMAC 0.342
-lam  4.00 after unload       girder el  55 deck el  68  df%  -0.43  -0.23  -0.07  -0.14  -0.08  -0.08  -0.02  -0.02  minMAC 0.998
-           under/mass-only (stiffness part)  df%  -8.28  -3.23  -3.08  -3.23  -1.79 +108.77  -3.29  -3.13
-lam  4.50 mass only          girder el  75 deck el  68  df% -34.61 -14.79 -18.69 -35.58 -15.27  -8.65 -29.52 -24.02  minMAC 0.350
-lam  4.50 under load         girder el  75 deck el  68  df% -44.36 -20.16 -21.82 -40.16 -18.87 +80.90 -32.70 -26.34  minMAC 0.118
-lam  4.50 jacked             girder el  75 deck el  68  df% -14.47  -5.59  -4.17  -5.30  -1.86  -2.91  -3.53  -2.44  minMAC 0.774
-lam  4.50 jacked (tangent)   girder el  75 deck el  68  df% -46.25 -16.09  -7.01 -38.08 -15.16  -8.05  -7.45  -4.30  minMAC 0.390
-lam  4.50 after unload       girder el  75 deck el  68  df%  -0.86  -0.49  -0.13  -0.36  -0.20  -0.20  -0.04  -0.05  minMAC 0.990
-           under/mass-only (stiffness part)  df% -14.91  -6.30  -3.85  -7.12  -4.25 +98.03  -4.52  -3.05
-lam  5.00 mass only          girder el  93 deck el  68  df% -36.66 -16.10 -19.59 -37.69 -16.98  -9.27 -30.84 -25.16  minMAC 0.359
-lam  5.00 under load         girder el  93 deck el  68  df% -49.98 -24.29 -23.37 +97.43 -23.23 -52.21 -34.82 -29.11  minMAC 0.128
-lam  5.00 jacked             girder el  93 deck el  68  df% -20.93  -8.70  -4.82  -9.78  -3.57  -4.24  -3.98  -3.20  minMAC 0.691
-lam  5.00 jacked (tangent)   girder el  93 deck el  68  df% -52.79 -35.73  -9.78 -41.83 -25.05 -14.96  -7.99  -5.51  minMAC 0.526
-lam  5.00 after unload       girder el  93 deck el  68  df%  -1.37  -0.84  -0.20  -0.68  -0.40  -0.36  -0.06  -0.09  minMAC 0.970
-           under/mass-only (stiffness part)  df% -21.03  -9.76  -4.70 +216.87  -7.53 -47.32  -5.74  -5.27
-lam  5.50 mass only          girder el 106 deck el  68  df% -38.53 -17.36 -20.42 -39.62 -18.64  -9.83 -32.07 -26.18  minMAC 0.360
-lam  5.50 under load         girder el 106 deck el  68  df% -54.80 -29.15 -25.20 +88.48 -27.82 -56.10 -36.85 -32.08  minMAC 0.133
-lam  5.50 jacked             girder el 106 deck el  68  df% -26.58 -13.35  -5.52 -14.51  -6.32  -5.80  -4.42  -3.43  minMAC 0.656
-lam  5.50 jacked (tangent)   girder el 106 deck el  68  df% -54.77 -38.04  -8.55 -46.37 -34.84 -19.72  -8.45  -7.91  minMAC 0.560
-lam  5.50 after unload       girder el 106 deck el  68  df%  -2.00  -1.31  -0.30  -1.10  -0.66  -0.58  -0.08  -0.17  minMAC 0.949
-           under/mass-only (stiffness part)  df% -26.46 -14.26  -6.01 +212.14 -11.29 -51.31  -7.03  -8.00
-lam  6.00 mass only          girder el 114 deck el  68  df% -40.25 -18.58 -21.19 -41.37 -20.23 -10.37 -33.21 -27.10  minMAC 0.359
-lam  6.00 under load         girder el 114 deck el  68  df% -58.74 -33.51 -27.12 -53.24 -32.21 +57.29 -38.78 -26.92  minMAC 0.090
-lam  6.00 jacked             girder el 114 deck el  68  df% -31.25 -17.68  -6.12 -18.93  -9.58  -7.52  -4.85  -4.39  minMAC 0.647
-lam  6.00 jacked (tangent)   girder el 114 deck el  68  df% -55.70 -38.81  -9.78 -47.77 -39.35 -21.52  -8.40  -9.91  minMAC 0.710
-lam  6.00 after unload       girder el 114 deck el  68  df%  -2.64  -1.81  -0.39  -1.57  -0.99  -0.82  -0.10  -0.26  minMAC 0.932
-           under/mass-only (stiffness part)  df% -30.96 -18.34  -7.52 -20.24 -15.02 +75.49  -8.34  +0.25
-lam  6.50 mass only          girder el 121 deck el  68  df% -41.83 -19.74 -21.92 -42.98 -21.76 -10.89 -34.27 -27.98  minMAC 0.331
-lam  6.50 under load         girder el 121 deck el  68  df% -61.97 -37.20 -27.63 +73.30 -36.18 -62.82 -40.62 -29.51  minMAC 0.099
-lam  6.50 jacked             girder el 121 deck el  68  df% -35.08 -21.28  -6.61 -22.98 -12.85  -9.24  -5.24  -5.45  minMAC 0.648
-lam  6.50 jacked (tangent)   girder el 121 deck el  68  df% -56.22 -39.22 -10.49 -49.78 -40.77 -23.17  -8.74 -13.19  minMAC 0.647
-lam  6.50 after unload       girder el 121 deck el  68  df%  -3.31  -2.33  -0.49  -2.13  -1.35  -1.10  -0.13  -0.39  minMAC 0.900
-           under/mass-only (stiffness part)  df% -34.62 -21.75  -7.31 +203.94 -18.43 -58.28  -9.67  -2.13
-lam  7.00 mass only          girder el 124 deck el  68  df% -43.30 -20.87 -22.61 -44.46 -23.23 -11.41 -35.25 -28.88  minMAC 0.262
-lam  7.00 under load         girder el 124 deck el  68  df% -64.60 -40.30 -29.17 +66.80 -39.73 -65.20 -42.37 -41.22  minMAC 0.079
-lam  7.00 jacked             girder el 124 deck el  68  df% -38.24 -24.25  -7.02 -26.52 -16.06 -10.94  -5.61  -6.72  minMAC 0.530
-lam  7.00 jacked (tangent)   girder el 124 deck el  68  df% -56.45 -39.53 -11.69 -50.03 -41.75 -23.81  -8.75 -13.72  minMAC 0.575
-lam  7.00 after unload       girder el 124 deck el  68  df%  -3.95  -2.84  -0.58  -2.57  -1.71  -1.33  -0.16  -0.49  minMAC 0.894
-           under/mass-only (stiffness part)  df% -37.57 -24.56  -8.48 +200.34 -21.49 -60.72 -11.01 -17.35
-lam  7.50 mass only          girder el 128 deck el  68  df% -44.66 -21.95 -23.27 -45.83 -24.64 -11.92 -36.16 -28.72  minMAC 0.165
-lam  7.50 under load         girder el 128 deck el  68  df% -66.57 -42.92 -30.39 -62.39  -4.31 +37.27 -44.05 -66.38  minMAC 0.051
-lam  7.50 jacked             girder el 128 deck el  68  df% -40.86 -26.67  -7.37 -29.56 -19.07 -12.48  -5.95  -6.61  minMAC 0.409
-lam  7.50 jacked (tangent)   girder el 128 deck el  68  df% -56.76 -39.72 -12.75 -50.97 -42.75 -24.43  -8.67 -14.97  minMAC 0.456
-lam  7.50 after unload       girder el 128 deck el  68  df%  -4.64  -3.39  -0.68  -3.16  -2.17  -1.62  -0.19  -0.60  minMAC 0.867
-           under/mass-only (stiffness part)  df% -39.60 -26.86  -9.28 -30.57 +26.97 +55.85 -12.36 -52.83
+lam  0.50 mass only          df%  -6.29  -2.01  -4.62  -5.53  -1.42  -3.34  -6.07  -4.88  minMAC 0.894
+lam  0.50 under load         df%  -6.29  -2.01  -4.62  -5.53  -1.42  -3.34  -6.07  -4.88  minMAC 1.000
+lam  0.50 jacked             df%  -0.00  -0.00  -0.00  -0.00  -0.00  -0.00  -0.00  -0.00  minMAC 1.000
+lam  0.50 jacked (tangent)   df%  -0.00  +0.00  -0.00  -0.00  +0.00  +0.00  -0.00  -0.00  minMAC 1.000
+lam  0.50 after unload       df%  -0.00  -0.00  -0.00  +0.00  -0.00  -0.00  +0.00  +0.00  minMAC 1.000
+lam  1.00 mass only          df% -11.69  -3.88  -7.90 -11.13  -2.94  -5.06 -10.90  -8.94  minMAC 0.747
+lam  1.00 under load         df% -11.73  -4.06  -9.14 -11.26  -3.07  -5.39 -12.40 -10.01  minMAC 0.999
+lam  1.00 jacked             df%  -0.02  -0.18  -1.35  -0.03  -0.09  -0.44  -1.60  -1.08  minMAC 0.998
+lam  1.00 jacked (tangent)   df%  -0.02  -0.18  -1.35  -0.03  -0.09  -0.44  -1.60  -1.08  minMAC 0.998
+lam  1.00 after unload       df%  -0.00  -0.00  -0.00  -0.00  +0.00  -0.00  -0.00  -0.00  minMAC 1.000
+lam  1.50 mass only          df% -16.35  -5.65 -10.39 -16.16  -4.58  -6.18 -14.79 -12.33  minMAC 0.645
+lam  1.50 under load         df% -16.42  -5.93 -12.08 -16.37  -4.82  -6.63 -16.85 -13.86  minMAC 0.998
+lam  1.50 jacked             df%  -0.02  -0.26  -1.90  -0.05  -0.13  -0.63  -2.26  -1.58  minMAC 0.996
+lam  1.50 jacked (tangent)   df%  -0.02  -0.26  -1.90  -0.05  -0.13  -0.63  -2.26  -1.58  minMAC 0.996
+lam  1.50 after unload       df%  -0.00  -0.00  -0.00  -0.00  -0.00  +0.00  -0.00  -0.00  minMAC 1.000
+lam  2.00 mass only          df% -20.40  -7.35 -12.37 -20.53  -6.30  -7.11 -17.96 -15.15  minMAC 0.575
+lam  2.00 under load         df% -20.49  -7.65 -14.15 -20.78  -6.64  -7.60 -20.08 -16.79  minMAC 0.997
+lam  2.00 jacked             df%  -0.03  -0.29  -2.05  -0.06  -0.15  -0.68  -2.45  -1.73  minMAC 0.995
+lam  2.00 jacked (tangent)   df%  -0.03  -0.29  -2.05  -0.06  -0.15  -0.68  -2.45  -1.73  minMAC 0.995
+lam  2.00 after unload       df%  -0.00  -0.00  -0.00  +0.00  -0.00  +0.00  +0.00  -0.00  minMAC 1.000
+lam  2.50 mass only          df% -23.94  -8.96 -14.01 -24.34  -8.08  -8.02 -20.50 -17.53  minMAC 0.514
+lam  2.50 under load         df% -24.04  -9.29 -15.80 -24.60  -8.52  -8.67 -22.49 -19.18  minMAC 0.973
+lam  2.50 jacked             df%  -0.03  -0.30  -2.11  -0.06  -0.15  -0.70  -2.52  -1.79  minMAC 0.995
+lam  2.50 jacked (tangent)   df%  -0.03  -0.30  -2.11  -0.06  -0.15  -0.70  -2.52  -1.79  minMAC 0.995
+lam  2.50 after unload       df%  -0.00  -0.00  -0.00  -0.00  +0.00  +0.00  -0.00  -0.00  minMAC 1.000
+lam  2.98 mass only          df% -26.96 -10.46 -15.36 -27.56  -9.83  -9.07 -22.38 -19.47  minMAC 0.439
+lam  2.98 under load         df% -27.08 -10.79 -17.14 -27.83 -10.36 -10.15 -23.97 -21.11  minMAC 0.921
+lam  2.98 jacked             df%  -0.03  -0.30  -2.13  -0.06  -0.16  -0.71  -2.56  -1.82  minMAC 0.995
+lam  2.98 jacked (tangent)   df%  -5.06  -0.67  -3.43  -0.25  -0.19  -0.83  -3.13  -2.14  minMAC 0.967
+lam  2.98 after unload       df%  -0.00  -0.00  -0.00  -0.00  -0.00  -0.00  -0.00  -0.00  minMAC 1.000
+lam  3.00 mass only          df% -27.07 -10.51 -15.41 -27.67  -9.89  -9.11 -22.44 -19.54  minMAC 0.435
+lam  3.00 under load         df% -27.20 -10.85 -17.19 -27.94 -10.43 -10.22 -24.01 -21.18  minMAC 0.920
+lam  3.00 jacked             df%  -0.04  -0.30  -2.14  -0.06  -0.16  -0.71  -2.56  -1.82  minMAC 0.995
+lam  3.00 jacked (tangent)   df%  -5.06  -0.67  -3.43  -0.25  -0.19  -0.83  -3.13  -2.14  minMAC 0.967
+lam  3.00 after unload       df%  -0.00  -0.00  -0.00  -0.00  -0.00  -0.00  -0.00  -0.00  minMAC 1.000
+lam  3.50 mass only          df% -29.85 -12.00 -16.63 -30.61 -11.71 -10.55 -23.75 -21.26  minMAC 0.301
+lam  3.50 under load         df% -30.49 -12.43 -18.44 -30.96 -12.34 +105.00 -28.15 -22.93  minMAC 0.089
+lam  3.50 jacked             df%  -0.63  -0.40  -2.29  -0.10  -0.16  -0.75  -2.64  -1.85  minMAC 0.995
+lam  3.50 jacked (tangent)   df% -24.96  -7.35  -5.62  -4.72  -0.89  -2.93  -4.49  -3.23  minMAC 0.672
+lam  3.50 after unload       df%  -0.08  -0.01  -0.02  -0.01  -0.00  -0.01  -0.01  -0.00  minMAC 1.000
+lam  4.00 mass only          df% -32.35 -13.42 -17.71 -33.23 -13.51  -7.90 -28.13 -22.74  minMAC 0.324
+lam  4.00 under load         df% -34.63 -14.91 -19.81 +129.16 -14.55 -42.65 -29.97 -24.53  minMAC 0.100
+lam  4.00 jacked             df%  -2.91  -1.67  -2.67  -0.58  -0.44  -1.00  -2.79  -1.91  minMAC 0.977
+lam  4.00 jacked (tangent)   df% -39.45 -13.58  -6.29 -25.08  -8.32  -6.69  -6.09  -2.63  minMAC 0.459
+lam  4.00 after unload       df%  -0.42  -0.23  -0.07  -0.14  -0.08  -0.08  -0.02  -0.02  minMAC 0.998
+lam  4.50 mass only          df% -34.61 -14.79 -18.69 -35.58 -15.27  -8.65 -29.52 -24.02  minMAC 0.350
+lam  4.50 under load         df% -38.94 -17.72 -21.12 +121.00 -17.13 -45.41 -31.75 -26.10  minMAC 0.108
+lam  4.50 jacked             df%  -6.18  -3.27  -3.08  -1.75  -0.95  -1.46  -2.98  -2.03  minMAC 0.883
+lam  4.50 jacked (tangent)   df% -44.23 -25.40  -7.53 -31.47 -13.12  -7.80  -7.05  -7.40  minMAC 0.330
+lam  4.50 after unload       df%  -0.82  -0.48  -0.13  -0.32  -0.20  -0.17  -0.04  -0.05  minMAC 0.990
+lam  5.00 mass only          df% -36.66 -16.10 -19.59 -37.69 -16.98  -9.27 -30.84 -25.16  minMAC 0.359
+lam  5.00 under load         df% -43.23 -21.36 -22.61 +112.76 -20.06 -48.25 -33.46 -27.88  minMAC 0.116
+lam  5.00 jacked             df% -10.09  -6.04  -3.60  -3.52  -1.96  -2.18  -3.19  -2.23  minMAC 0.821
+lam  5.00 jacked (tangent)   df% -49.47 -32.81  -8.22 -36.70 -26.39 -15.07  -7.74  -4.65  minMAC 0.507
+lam  5.00 after unload       df%  -1.36  -0.86  -0.20  -0.65  -0.41  -0.33  -0.05  -0.08  minMAC 0.971
+lam  5.50 mass only          df% -38.53 -17.36 -20.42 -39.62 -18.64  -9.83 -32.07 -26.18  minMAC 0.360
+lam  5.50 under load         df% -47.17 -25.00 -24.07 -43.66 -23.17 +78.24 -35.07 -28.79  minMAC 0.123
+lam  5.50 jacked             df% -13.95  -9.03  -4.11  -5.66  -3.46  -3.09  -3.41  -2.52  minMAC 0.797
+lam  5.50 jacked (tangent)   df% -51.00 -34.15  -8.71 -40.89 -31.26 -17.91  -8.09 -12.33  minMAC 0.529
+lam  5.50 after unload       df%  -2.01  -1.34  -0.30  -1.10  -0.70  -0.57  -0.08  -0.18  minMAC 0.953
+lam  6.00 mass only          df% -40.25 -18.58 -21.19 -41.37 -20.23 -10.37 -33.21 -27.10  minMAC 0.359
+lam  6.00 under load         df% -50.68 -28.34 -25.43 -46.74 -26.29 +72.12 -36.59 -30.79  minMAC 0.127
+lam  6.00 jacked             df% -17.52 -11.81  -4.56  -7.97  -5.25  -4.13  -3.63  -2.89  minMAC 0.793
+lam  6.00 jacked (tangent)   df% -51.64 -34.54  -8.82 -42.39 -33.59 -18.97  -8.30  -8.56  minMAC 0.526
+lam  6.00 after unload       df%  -2.63  -1.83  -0.38  -1.53  -1.02  -0.79  -0.10  -0.24  minMAC 0.935
+lam  6.50 mass only          df% -41.83 -19.74 -21.92 -42.98 -21.76 -10.89 -34.27 -27.98  minMAC 0.331
+lam  6.50 under load         df% -53.78 -31.33 -26.71 -49.57 -29.32 +66.49 -38.03 -32.80  minMAC 0.130
+lam  6.50 jacked             df% -20.74 -14.29  -4.96 -10.32  -7.13  -5.17  -3.85  -3.33  minMAC 0.792
+lam  6.50 jacked (tangent)   df% -52.29 -35.05  -8.69 -44.45 -35.88 -20.37  -8.42 -10.83  minMAC 0.673
+lam  6.50 after unload       df%  -3.28  -2.34  -0.48  -2.00  -1.40  -1.03  -0.13  -0.34  minMAC 0.927
+lam  7.00 mass only          df% -43.30 -20.87 -22.61 -44.46 -23.23 -11.41 -35.25 -28.88  minMAC 0.262
+lam  7.00 under load         df% -56.52 -34.03 -27.94 +85.43 -32.22 -58.43 -39.40 -34.98  minMAC 0.122
+lam  7.00 jacked             df% -23.66 -16.51  -5.32 -12.68  -9.14  -6.28  -4.06  -3.85  minMAC 0.797
+lam  7.00 jacked (tangent)   df% -52.59 -35.38  -9.19 -45.51 -36.72 -21.48  -8.80 -12.37  minMAC 0.501
+lam  7.00 after unload       df%  -3.96  -2.87  -0.59  -2.57  -1.79  -1.33  -0.16  -0.47  minMAC 0.900
+lam  7.50 mass only          df% -44.66 -21.95 -23.27 -45.83 -24.64 -11.92 -36.16 -28.72  minMAC 0.165
+lam  7.50 under load         df% -58.94 -36.43 -29.27 +79.65  +6.74 -60.38 -40.70 -61.72  minMAC 0.116
+lam  7.50 jacked             df% -26.27 -18.45  -5.64 -14.93 -11.09  -7.34  -4.27  -4.46  minMAC 0.632
+lam  7.50 jacked (tangent)   df% -52.92 -35.69  -9.63 -46.40 -38.01 -22.25  -8.51 -13.02  minMAC 0.552
+lam  7.50 after unload       df%  -4.65  -3.43  -0.69  -3.15  -2.27  -1.62  -0.19  -0.59  minMAC 0.878
 Process 0 Terminating
