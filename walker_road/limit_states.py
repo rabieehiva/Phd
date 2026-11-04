@@ -63,6 +63,7 @@ EC_INSITU = 1.3                 # in-situ / S6 Ec ratio used for the modular rat
 N_P = EP / (EC_INSITU * wg.E_GIRDER_S6)
 RES_AT_ULT = 0.84               # residual dynamic stiffness after loading near ultimate (Zhou et al. 2019)
 DETECT_PCT = 0.5                # detection threshold on |df| after temperature compensation (%)
+S_E = wg.S_GIRDER               # equivalent transverse span for S6 5.7.1.2 (Fig. 5.3; c/c used -- verify)
 THETA0 = 0.004                  # bearing rotation from construction tolerance (Dwg 5/18 schedule, rad)
 H_RT = 0.064                    # total rubber thickness of the pad (inferred from K_v, K_h; not on drawings)
 ITER_TOL, ITER_MAX = 1e-3, 30   # secant iteration: max change of any I_e/I_g, max iterations
@@ -381,9 +382,10 @@ def to_elements(node_vals, how="mean"):
 
 
 def deck_local_moment():
-    """Local transverse slab moment per m under one wheel of the 175 kN axle (AASHTO Std. Spec.
-    3.24.3.1 form, continuity 0.8 -- NOT a CSA expression) and dead-load moment w S^2/10."""
-    m_ll = 0.8 * (wg.S_GIRDER + 0.61) / 9.74 * (AXLE_P.max() / 2)
+    """Transverse live-load moment intensity in the inner deck slab, S6-19 5.7.1.2(a):
+    simple span (S_e + 0.6) P / 10 kN m/m, continuous over >= 3 supports -> 80 % of that,
+    P = CL-W wheel load (heaviest axle / 2). Plus the dead-load moment w S^2 / 10."""
+    m_ll = 0.8 * (S_E + 0.6) * (AXLE_P.max() / 2) / 10
     w = wg.UNIT_WT_CONC * wg.T_SLAB + wg.UNIT_WT_ASPH * wg.T_ASPHALT
     return m_ll, w * wg.S_GIRDER ** 2 / 10
 
@@ -463,7 +465,56 @@ def deck_modes(p, n=30):
 def track(ref_sh, fd, shd):
     macm = np.array([[wg.mac(r, s) for s in shd] for r in ref_sh])
     rows, cols = linear_sum_assignment(-macm)
-    return fd[cols], macm[rows, cols]
+    return fd[cols], macm[rows, cols], shd[cols]
+
+
+# --- sensor-based shape metrics (surveyed layout, mac_tools) ------------------------------
+_SENS = {}
+
+
+def sensors():
+    if not _SENS:
+        import mac_tools as mt
+        df = mt.load_sensors()
+        _SENS["acc"] = df[df.role == "acceleration"].sort_values("sensor").reset_index(drop=True)
+        _SENS["sg"] = df[df.role == "girder_strain"].sort_values("sensor").reset_index(drop=True)
+        _SENS["mt"] = mt
+    return _SENS
+
+
+def curvature(shapes):
+    """d2w/dx2 along every girder line, (n, 7, 31), central differences, zero at the bearings."""
+    k = np.zeros_like(shapes)
+    k[:, :, 1:-1] = (shapes[:, :, 2:] - 2 * shapes[:, :, 1:-1] + shapes[:, :, :-2]) / wg.DX ** 2
+    return k
+
+
+def at_gauges(kappa, sg):
+    st = np.linspace(0, 1, wg.N_SEG + 1)
+    return np.array([[np.interp(xi, st, kappa[m, j]) for j, xi in zip(sg.girder.values, sg.xi.values)]
+                     for m in range(kappa.shape[0])])
+
+
+def shape_metrics(sh_ref, sh):
+    """Per tracked mode: MAC at the 9 accelerometers, MAC of the strain (curvature) shapes at the
+    15 girder gauges, largest curvature change at a gauge (% of the largest reference value);
+    COMAC per accelerometer over the first 5 tracked modes."""
+    S = sensors()
+    mt = S["mt"]
+    sh_ref, sh = np.asarray(sh_ref), np.asarray(sh)
+    alpha = np.einsum("kij,kij->k", sh_ref, sh) / np.einsum("kij,kij->k", sh, sh)
+    sh = sh * alpha[:, None, None]                                  # same amplitude and sign as reference
+    a_r, a_s = mt.fe_at_sensors(sh_ref, S["acc"]), mt.fe_at_sensors(sh, S["acc"])
+    k_r, k_s = at_gauges(curvature(sh_ref), S["sg"]), at_gauges(curvature(sh), S["sg"])
+    mac_acc = np.diag(mt.mac_matrix(a_r, a_s))
+    mac_sg = np.diag(mt.mac_matrix(k_r, k_s))
+    dk = 100 * np.abs(k_s - k_r).max(1) / np.abs(k_r).max(1)
+    n = 5
+    ar = a_r[:n] / np.linalg.norm(a_r[:n], axis=1, keepdims=True)
+    as_ = a_s[:n] / np.linalg.norm(a_s[:n], axis=1, keepdims=True)
+    comac = (np.abs(ar * as_).sum(0)) ** 2 / ((ar ** 2).sum(0) * (as_ ** 2).sum(0))
+    return dict(mac_acc=mac_acc.tolist(), mac_sg=mac_sg.tolist(), dkappa_max_pct=dk.tolist(),
+                comac_acc=comac.tolist())
 
 
 def main():
@@ -560,25 +611,32 @@ def main():
             return p
 
         fd_m, sh_m, _ = deck_modes({**p0, "extra_mass": truck_mass(lam)})
-        f_m, mac_m = track(sh_ref, fd_m, sh_m)
+        f_m, mac_m, shp_m = track(sh_ref, fd_m, sh_m)
         sh_m_t = [sh_m[np.argmax([wg.mac(r, s) for s in sh_m])] for r in sh_ref]
-        cases = {"mass only": (f_m, mac_m)}
+        cases = {"mass only": (f_m, mac_m, shp_m)}
         fd, shd, _ = deck_modes(stiff({**p0, "extra_mass": truck_mass(lam)}, "under"))
         cases["under load"] = track(sh_m_t, fd, shd)
         for case, key in (("jacked", "under"), ("jacked (tangent)", "tangent"), ("after unload", "after")):
             fd, shd, _ = deck_modes(stiff(dict(p0), key))
             cases[case] = track(sh_ref, fd, shd)
-        for case, (ft, macs) in cases.items():
+        for case, (ft, macs, shp) in cases.items():
             df = 100 * (ft - f_ref) / f_ref
+            sm = shape_metrics(sh_ref, shp)
             row = dict(lam=lam, case=case, f=ft.tolist(), df_pct=df.tolist(), mac=macs.tolist(),
                        n_cracked_girder_el=int(st["cracked"].sum()), n_cracked_deck_el=int((st["trans"] < 0.999).sum()),
-                       dT_equiv=[float(d / tsens[n]) if n in tsens else None for d, n in zip(df, names)])
+                       dT_equiv=[float(d / tsens[n]) if n in tsens else None for d, n in zip(df, names)], **sm)
             if case == "under load":
                 row["df_stiffness_pct"] = (100 * (ft - f_m) / f_m).tolist()
             rows.append(row)
-            print(f"lam {lam:5.2f} {case:18s} df% " + " ".join(f"{d:+6.2f}" for d in df) +
-                  "  minMAC %.3f" % macs.min())
-    out["stage2"] = dict(names=names, families=[list(f) for f in fams], f_ref=f_ref.tolist(), rows=rows)
+            print(f"lam {lam:5.2f} {case:18s} df% " + " ".join(f"{d:+6.2f}" for d in df[:5]) +
+                  "  MAC_acc " + " ".join(f"{x:.3f}" for x in sm["mac_acc"][:3]) +
+                  "  MAC_sg " + " ".join(f"{x:.3f}" for x in sm["mac_sg"][:3]) +
+                  "  dkappa% " + " ".join(f"{x:5.1f}" for x in sm["dkappa_max_pct"][:3]) +
+                  "  minCOMAC %.3f" % min(sm["comac_acc"]))
+    mac_stab = {n: float(ms.MAC_STAB[ms.MODES.index(n)]) for n in names if n in ms.MODES}
+    out["stage2"] = dict(names=names, families=[list(f) for f in fams], f_ref=f_ref.tolist(), rows=rows,
+                         mac_stab_measured=mac_stab, accelerometers=sensors()["acc"].sensor.tolist(),
+                         gauges=sensors()["sg"].sensor.tolist())
     with open("results/limit_states.json", "w") as fh:
         json.dump(out, fh, indent=1, default=float)
     plot(out)
@@ -612,6 +670,28 @@ def plot(out):
     axs[1, 0].legend(fontsize=6)
     fig.tight_layout()
     fig.savefig("results/limit_states.png", dpi=150)
+
+    # mode-shape detectability: 1 - MAC at accelerometers and at strain gauges
+    fig, axs = plt.subplots(1, 3, figsize=(11, 3.6), sharey=True)
+    for k, ax in enumerate(axs):
+        n = st["names"][k]
+        for c, col in (("jacked", "C0"), ("after unload", "C3")):
+            rr = [r for r in st["rows"] if r["case"] == c and r["mac"][k] >= MAC_TRACK]
+            lam = [r["lam"] for r in rr]
+            ax.semilogy(lam, [max(1 - r["mac_acc"][k], 1e-6) for r in rr], "-o", ms=3, color=col,
+                        label=f"{c}: accelerometers")
+            ax.semilogy(lam, [max(1 - r["mac_sg"][k], 1e-6) for r in rr], "--s", ms=3, color=col,
+                        label=f"{c}: strain gauges")
+        if n in st["mac_stab_measured"]:
+            ax.axhline(1 - st["mac_stab_measured"][n], color="k", lw=0.8, ls=":", label="measured 1 - MAC stability")
+        ax.axvline(min(out["stage1"]["lam_crack"]), color="k", lw=0.6)
+        ax.set_title(f"{n}")
+        ax.set_xlabel("λ (CL-625 trucks per lane)")
+        ax.grid(alpha=0.3, which="both")
+    axs[0].set_ylabel("1 - MAC")
+    axs[0].legend(fontsize=6)
+    fig.tight_layout()
+    fig.savefig("results/limit_states_shapes.png", dpi=150)
 
 
 if __name__ == "__main__":
