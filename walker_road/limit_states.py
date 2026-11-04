@@ -10,7 +10,8 @@ Stage 1: structural state as a function of the test-load factor lambda
              solve ... until the cracked stiffness stops changing (load redistribution between girders),
            * local transverse deck cracking under the wheels (cracked transformed slab section),
            * prestress losses by S6-19 8.7.4 (ES, creep, shrinkage, relaxation) at the OMA date,
-           * bearing compression stiffening and heel lift-off with load (14 pads),
+           * bearing compression stiffening and heel lift-off with load (14 pads), and a friction
+             check H <= mu R (pads are not attached, so slip would be the only way to lose restraint),
            * flexural resistance M_r (8.8.4, unfactored) -> upper limit of lambda.
 Stage 2: modal analysis of each converged state, mode tracking by MAC, detectability as the
          equivalent temperature change of the measured frequencies. Cases:
@@ -65,7 +66,9 @@ RES_AT_ULT = 0.84               # residual dynamic stiffness after loading near 
 DETECT_PCT = 0.5                # detection threshold on |df| after temperature compensation (%)
 S_E = wg.S_GIRDER               # equivalent transverse span for S6 5.7.1.2 (Fig. 5.3; c/c used -- verify)
 THETA0 = 0.004                  # bearing rotation from construction tolerance (Dwg 5/18 schedule, rad)
-H_RT = 0.064                    # total rubber thickness of the pad (inferred from K_v, K_h; not on drawings)
+H_RT = 0.070                    # total rubber thickness: G A / K_s = 0.81 MPa x 0.15 m2 / 1.74 kN/mm (Goodco EL
+                                # eq. 5, Table EL-1, 55 duro at 20 C; K_s from the Dwg 5/18 schedule)
+MU_PAD = 0.20                   # rubber on broom-finished concrete (Goodco EL, p. 9); pads not attached (Dwg 5/11/12)
 ITER_TOL, ITER_MAX = 1e-3, 30   # secant iteration: max change of any I_e/I_g, max iterations
 
 # CL-625 truck (S6-19 Fig. 3.4): axle loads (kN) and distances from the front axle (m)
@@ -354,7 +357,8 @@ def static_response(p, lam):
     ops.analyze(1)
     mom = np.array([[wg.girder_moment_at(m, j, i) for i in range(wg.N_SEG + 1)] for j in range(wg.N_GIRDER)])
     rot = np.array([ops.nodeDisp(int(m.node[j, i]), 5) for i in (0, wg.N_SEG) for j in range(wg.N_GIRDER)])
-    return mom, wg.bearing_reactions(m), m, rot
+    h = np.array([math.hypot(*ops.eleResponse(e, "force")[:2]) for e in m.brg_ele])
+    return mom, wg.bearing_reactions(m), m, rot, h
 
 
 # ----------------------------------------------------------------------------------------
@@ -422,7 +426,7 @@ def converge_state(p0, gp, lam, m_ref, r_dl):
     for it in range(1, ITER_MAX + 1):
         p_it = {**p0, "I_el": f_el, "trans_el": trans,
                 "kv": np.asarray(p0["kv"]) * f_kv, "kr": np.asarray(p0["kr"]) * f_kr}
-        m_ll, reac, _, rot = static_response(p_it, lam)
+        m_ll, reac, _, rot, h_pad = static_response(p_it, lam)
         r_node, c_node = ie_ratio(gp, m_ll)
         f_new = to_elements(r_node)
         kv_new, kr_new, contact, eps = bearing_factors(p0, dict(dead=r_dl, now=r_dl + reac), rot)
@@ -436,7 +440,7 @@ def converge_state(p0, gp, lam, m_ref, r_dl):
     icr_el = to_elements(np.array([gp[j]["icr"] for j in range(wg.N_GIRDER)]))
     return dict(f_el=f_new, cracked=cracked_el, icr_el=icr_el, m_ll=m_ll, reac=reac, trans=trans,
                 iterations=it, history=hist, f_kv=f_kv, f_kr=f_kr, contact=contact, eps=eps,
-                theta=THETA0 + np.abs(rot))
+                theta=THETA0 + np.abs(rot), h_pad=h_pad)
 
 
 def residual_factors(st, gp, lam, lam_cr, lam_u):
@@ -530,7 +534,7 @@ def main():
 
     # --- Stage 1 ---------------------------------------------------------------------
     gp = girder_properties(p0)
-    m1, r1, m_ref, rot1 = static_response(p0, 1.0)          # uncracked, lambda = 1
+    m1, r1, m_ref, rot1, _ = static_response(p0, 1.0)          # uncracked, lambda = 1
     lam_cr = [float(np.min(np.where(m1[j] > 0, gp[j]["m_cr_ll"] / m1[j], np.inf))) for j in range(7)]
     lam_0 = [float(np.min(np.where(m1[j] > 0, (gp[j]["m_cr_ll"] - FR / gp[j]["k_b"]) / m1[j], np.inf)))
              for j in range(7)]
@@ -549,13 +553,16 @@ def main():
     print(f"deck: local M_LL {m_ll_deck:.1f} kNm/m per truck, M_DL {m_dl_deck:.1f}, M_cr {m_cr_deck:.1f}"
           f" -> lam_deck_crack = {lam_deck:.2f}")
     print("bearing pressure under dead load (MPa):", np.round(r_dl / a_pad / 1e3, 2))
+    k_s = wg.BRG_KH
+    print(f"pad positive-attachment checks (Goodco EL): sigma_DL {r_dl.min() / a_pad / 1e3:.2f} MPa >= 1.5;"
+          f" mu R_DL = {MU_PAD * r_dl.min():.0f} kN vs K_s x 13 mm = {k_s * 0.013:.0f} kN")
 
     # secant iteration at each load level
     lam_grid = np.arange(0.5, 12.0 + 1e-9, 0.5)
     lams, states = [], {}
     print("\nsecant iteration (girder I_e redistributes the live load):")
     print("  lam   iters  cracked el   G1..G7 midspan M_LL (kN m)                     max M/M_r  max R (kN)"
-          "  max theta   kv factor     min contact")
+          "  max theta   kv factor     min contact  max H/(mu R)")
     for lam in sorted(set(np.round(np.r_[lam_grid, min(lam_cr)], 3))):
         st = converge_state(p0, gp, lam, m_ref, r_dl)
         util = max((gp[j]["m_d"] + st["m_ll"][j]).max() / gp[j]["Mr"] for j in range(7))
@@ -563,7 +570,7 @@ def main():
         print(f"  {lam:5.2f}  {st['iterations']:3d}    {int(st['cracked'].sum()):4d}      " +
               " ".join(f"{st['m_ll'][j].max():6.0f}" for j in range(7)) +
               f"     {util:6.3f}   {rmax:7.0f}    {st['theta'].max():.4f}   {st['f_kv'].min():.3f}-{st['f_kv'].max():.3f}"
-              f"   {st['contact'].min():.3f}")
+              f"   {st['contact'].min():.3f}       {(st['h_pad'] / (MU_PAD * (r_dl + st['reac']))).max():.3f}")
         if util >= 1.0:
             print(f"  -> flexural resistance reached at lambda = {lam:.2f}; stopping")
             break
@@ -581,7 +588,8 @@ def main():
                                 M_ll_mid=[float(s["m_ll"][j].max()) for j in range(7)], util=s["util"],
                                 bearing_R=(r_dl + s["reac"]).tolist(), bearing_kv_factor=s["f_kv"].tolist(),
                                 bearing_kr_factor=s["f_kr"].tolist(), bearing_contact=s["contact"].tolist(),
-                                bearing_theta=s["theta"].tolist())
+                                bearing_theta=s["theta"].tolist(), bearing_H=s["h_pad"].tolist(),
+                                slip_ratio=(s["h_pad"] / (MU_PAD * (r_dl + s["reac"]))).tolist())
                    for l, s in states.items()})
 
     # --- Stage 2 ---------------------------------------------------------------------
