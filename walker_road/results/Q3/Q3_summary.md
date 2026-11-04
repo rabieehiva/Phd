@@ -41,8 +41,20 @@ Simulated OMA (9 accelerometers, noise) of the bridge at each limit state with a
 
 **Answer:** a change in support fixity is very visible to OMA (frequencies +20 to +40 %, MAC down to about 0.88), much more than girder cracking. Calibration finds which end changed, but not how much: it over-estimates the fixity and compensates with a girder-modulus drop that is not real. Pad vertical stiffness is hard to identify, and cracking beyond ULS partly ends up in the pad stiffness. Support and girder stiffness are therefore not cleanly separable with 9 accelerometers.
 
+## Step 3b – Bilinear rotational stiffness at the supports (k1 → k2 = 0.75 k1)
+
+Threshold = first girder cracking, λ = 1.87. The physical alternative, the pad's back edge unloading under end rotation, is never reached at Walker Road.
+
+| Supports (k1) | M1 Δf just above threshold, without rule | with rule | extra from the rule | lowest MAC with rule |
+|---|---|---|---|---|
+| ends as they are (pad only) | -0.03 % | -0.06 % | -0.03 % | 1.000 |
+| both ends half-fixed | -0.03 % | -3.84 % | -3.81 % | 1.000 |
+| north end half-fixed | -0.04 % | -2.26 % | -2.23 % | 1.000 |
+
+**Answer:** with the ends as they are (practically pinned) the rule changes nothing (k1 is already tiny). If the ends were partly fixed, the 25 % drop in rotational stiffness lowers M1 by about 2–4 % in one step at the threshold – a detectable jump, larger than the girder cracking at ULS.
+
 ## Step 4 – Removing the load effect (next)
 
 Not done yet. For reference, the test-load mass alone lowers M1 by about 12 % per truck pair (λ = 1), far more than the cracking at ULS.
 
-Figures: `Q3_step1_physical_changes.png`, `Q3_step2_oma_response.png`, `Q3_step3_boundary_conditions.png`.
+Figures: `Q3_step1_physical_changes.png`, `Q3_step2_oma_response.png`, `Q3_step3_boundary_conditions.png`, `Q3_step3b_rotation_rule.png`.

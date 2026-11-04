@@ -7,6 +7,8 @@ One driver for the whole question, organised as the supervisor's chain:
   Step 2  Do OMA frequencies and mode shapes (9 accelerometers) show those changes?
   Step 3  Can OMA tell what the supports are doing?  (model calibration on simulated OMA data,
           support fixity / pad stiffness scenarios at each limit state)
+  Step 3b Bilinear rotational stiffness at the girder ends (k1 up to a physical threshold,
+          k2 = 0.75 k1 above), the supervisor's rule.
   Step 4  (later) Removing the effect of the test load (mass, mass-normalised shapes).
 
 Limit states: SLS (1 CL-625 truck per lane), 75 % ULS, ULS (1.70 x 1.25 x 0.90 = 1.91 trucks
@@ -18,6 +20,7 @@ Run:   python q3_run.py            (about 5 min; needs results/calibration.json)
 Out:   results/Q3/Q3_step1_physical_changes.png
        results/Q3/Q3_step2_oma_response.png
        results/Q3/Q3_step3_boundary_conditions.png
+       results/Q3/Q3_step3b_rotation_rule.png  (bilinear rotational stiffness k1 -> 0.75 k1)
        results/Q3/Q3_summary.md
 """
 from __future__ import annotations
@@ -154,7 +157,35 @@ def step3(bc):
     fig.savefig(f"{OUT}/Q3_step3_boundary_conditions.png", dpi=150)
 
 
-def summary(d, bc):
+def step3b(rr):
+    names = list(rr["cases"])
+    lam = np.array(rr["lams"])
+    fig, ax = plt.subplots(2, len(names), figsize=(14, 6), sharex=True, sharey="row")
+    for c, n in enumerate(names):
+        for rule, lsty in (("without rule", "--"), ("with rule", "-")):
+            r = rr["cases"][n][rule]
+            for k, col in zip(range(3), ("C0", "C1", "C2")):
+                ax[0, c].plot(lam, [x[k] for x in r["df_pct"]], lsty, color=col,
+                              label=f"M{k + 1 if k < 2 else 3}, {rule}" if c == 0 else None)
+                ax[1, c].semilogy(lam, [max(1 - x[k], 1e-6) for x in r["mac"]], lsty, color=col)
+        for a_ in ax[:, c]:
+            a_.axvline(rr["lam_threshold"], color="m", lw=1.2, label="threshold (first girder cracking)"
+                       if (c == 0 and a_ is ax[0, 0]) else None)
+            ls_lines(a_, rr["limit_states"])
+            a_.grid(alpha=0.3, which="both")
+        ax[0, c].axhspan(-ls.DETECT_PCT, ls.DETECT_PCT, color="0.85", zorder=0)
+        ax[0, c].set_title(n, fontsize=9)
+        ax[1, c].set_xlabel("λ = CL-625 trucks per lane")
+    ax[0, 0].set_ylabel("frequency change (%)")
+    ax[1, 0].set_ylabel("1 - MAC (9 accelerometers)")
+    ax[0, 0].legend(fontsize=6)
+    fig.suptitle(f"Bilinear rotational stiffness at the girder ends: k1 up to the threshold, "
+                 f"k2 = {rr['k2_ratio']} k1 above it", fontsize=10)
+    fig.tight_layout()
+    fig.savefig(f"{OUT}/Q3_step3b_rotation_rule.png", dpi=150)
+
+
+def summary(d, bc, rr=None):
     s1, st = d["stage1"], d["stage2"]
     it = s1["iteration"]
     lsd = s1["limit_states"]
@@ -220,26 +251,53 @@ def summary(d, bc):
           "how much: it over-estimates the fixity and compensates with a girder-modulus drop that is not real. "
           "Pad vertical stiffness is hard to identify, and cracking beyond ULS partly ends up in the pad "
           "stiffness. Support and girder stiffness are therefore not cleanly separable with 9 accelerometers.", "",
+          ] + (step3b_text(rr) if rr else []) + [
           "## Step 4 – Removing the load effect (next)", "",
           "Not done yet. For reference, the test-load mass alone lowers M1 by about "
           f"{-row('mass only', 1.0)['df_pct'][0]:.0f} % per truck pair (λ = 1), far more than the cracking at ULS.",
           "", "Figures: `Q3_step1_physical_changes.png`, `Q3_step2_oma_response.png`, "
-          "`Q3_step3_boundary_conditions.png`."]
+          "`Q3_step3_boundary_conditions.png`, `Q3_step3b_rotation_rule.png`."]
     open(f"{OUT}/Q3_summary.md", "w").write("\n".join(L) + "\n")
+
+
+def step3b_text(rr):
+    lam = np.array(rr["lams"])
+    j = int(np.argmax(lam > rr["lam_threshold"]))
+    L = ["## Step 3b – Bilinear rotational stiffness at the supports (k1 → k2 = "
+         f"{rr['k2_ratio']} k1)", "",
+         f"Threshold = first girder cracking, λ = {rr['lam_threshold']:.2f}. The physical alternative, the pad's "
+         "back edge unloading under end rotation, is "
+         + ("never reached at Walker Road." if rr["lam_pad_edge_unloads"] is None
+            else f"reached at λ = {rr['lam_pad_edge_unloads']:.2f}."), "",
+         "| Supports (k1) | M1 Δf just above threshold, without rule | with rule | extra from the rule | lowest MAC with rule |",
+         "|---|---|---|---|---|"]
+    for n, r in rr["cases"].items():
+        a, b = r["without rule"]["df_pct"][j][0], r["with rule"]["df_pct"][j][0]
+        L.append(f"| {n} | {a:+.2f} % | {b:+.2f} % | {b - a:+.2f} % | {min(r['with rule']['mac'][j][:3]):.3f} |")
+    L += ["", "**Answer:** with the ends as they are (practically pinned) the rule changes nothing (k1 is already "
+          "tiny). If the ends were partly fixed, the 25 % drop in rotational stiffness lowers M1 by about 2–4 % "
+          "in one step at the threshold – a detectable jump, larger than the girder cracking at ULS.", ""]
+    return L
 
 
 def main():
     os.makedirs(OUT, exist_ok=True)
     if "--plots" not in sys.argv:
         import bc_identification
+        import q3_rotation_rule
         ls.main()
         bc_identification.main()
+        q3_rotation_rule.main()
     d = json.load(open("results/limit_states.json"))
     bc = json.load(open("results/bc_identification.json"))
     step1(d)
     step2(d)
     step3(bc)
-    summary(d, bc)
+    rr_path = f"{OUT}/q3_rotation_rule.json"
+    rr = json.load(open(rr_path)) if os.path.exists(rr_path) else None
+    if rr:
+        step3b(rr)
+    summary(d, bc, rr)
     print(open(f"{OUT}/Q3_summary.md").read())
 
 
