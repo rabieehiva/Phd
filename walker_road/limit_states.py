@@ -10,8 +10,9 @@ Stage 1: structural state as a function of the test-load factor lambda
              solve ... until the cracked stiffness stops changing (load redistribution between girders),
            * local transverse deck cracking under the wheels (cracked transformed slab section),
            * prestress losses by S6-19 8.7.4 (ES, creep, shrinkage, relaxation) at the OMA date,
-           * bearing compression stiffening and heel lift-off with load (14 pads), and a friction
-             check H <= mu R (pads are not attached, so slip would be the only way to lose restraint),
+           * bearings: linear springs at the pad centre (standard practice); uplift (heel lift-off)
+             and slip (H <= mu R, pads not attached) are CHECKED at every load level but not modelled
+             as nonlinear behaviour (BEARING_NONLINEAR = True re-enables the stiffening rule),
            * flexural resistance M_r (8.8.4, unfactored) -> upper limit of lambda.
 Stage 2: modal analysis of each converged state, mode tracking by MAC, detectability as the
          equivalent temperature change of the measured frequencies. Cases:
@@ -68,6 +69,7 @@ S_E = wg.S_GIRDER               # equivalent transverse span for S6 5.7.1.2 (Fig
 THETA0 = 0.004                  # bearing rotation from construction tolerance (Dwg 5/18 schedule, rad)
 H_RT = 0.070                    # total rubber thickness: G A / K_s = 0.81 MPa x 0.15 m2 / 1.74 kN/mm (Goodco EL
                                 # eq. 5, Table EL-1, 55 duro at 20 C; K_s from the Dwg 5/18 schedule)
+BEARING_NONLINEAR = False       # False (standard practice): linear pad springs; uplift / slip only checked
 MU_PAD = 0.20                   # rubber on broom-finished concrete (Goodco EL, p. 9); pads not attached (Dwg 5/11/12)
 ITER_TOL, ITER_MAX = 1e-3, 30   # secant iteration: max change of any I_e/I_g, max iterations
 
@@ -240,6 +242,8 @@ def bearing_factors(p0, r_tot, theta_ll):
     half = wg.BRG_A_LONG / 2
     contact = np.where(theta * half > delta, np.minimum((half + delta / theta) / wg.BRG_A_LONG, 1.0), 1.0)
     contact_dl = 1.0                                       # dead-load state: full contact (calibration)
+    if not BEARING_NONLINEAR:                              # linear springs; contact / strain reported only
+        return np.ones_like(f_kv), np.ones_like(f_kv), contact, eps
     return f_kv * contact / contact_dl, f_kv * contact ** 3, contact, eps
 
 
@@ -564,7 +568,7 @@ def main():
     lams, states = [], {}
     print("\nsecant iteration (girder I_e redistributes the live load):")
     print("  lam   iters  cracked el   G1..G7 midspan M_LL (kN m)                     max M/M_r  max R (kN)"
-          "  max theta   kv factor     min contact  max H/(mu R)")
+          "  max theta   kv factor     min contact  max H/(mu R)   [contact 1 = no uplift; H/(mu R) < 1 = no slip]")
     for lam in sorted(set(np.round(np.r_[lam_grid, min(lam_cr)], 3))):
         st = converge_state(p0, gp, lam, m_ref, r_dl)
         util = max((gp[j]["m_d"] + st["m_ll"][j]).max() / gp[j]["Mr"] for j in range(7))

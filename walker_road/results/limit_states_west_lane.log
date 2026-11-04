@@ -13,163 +13,163 @@ bearing pressure under dead load (MPa): [3.07 3.07 3.07 3.07 3.07 3.07 3.07 3.07
 pad positive-attachment checks (Goodco EL): sigma_DL 3.07 MPa >= 1.5; mu R_DL = 92 kN vs K_s x 13 mm = 23 kN
 
 secant iteration (girder I_e redistributes the live load):
-  lam   iters  cracked el   G1..G7 midspan M_LL (kN m)                     max M/M_r  max R (kN)  max theta   kv factor     min contact  max H/(mu R)
-   0.25    2       0         191    127    151    134    102     74     82      0.298       478    0.0041   1.000-1.001   1.000       0.002
-   0.50    2       0         383    254    301    269    205    148    163      0.312       495    0.0042   1.000-1.003   1.000       0.004
-   1.00    2       0         766    508    607    541    411    295    325      0.339       529    0.0044   1.000-1.006   1.000       0.008
-   1.50    2       0        1149    763    914    813    617    442    486      0.366       564    0.0045   1.000-1.009   1.000       0.011
-   2.00    2       0        1533   1017   1221   1085    823    590    647      0.394       598    0.0047   1.000-1.011   1.000       0.013
-   2.50    2       0        1916   1271   1526   1357   1030    737    808      0.421       632    0.0049   1.000-1.014   1.000       0.016
-   3.00    2       0        2299   1525   1832   1628   1236    884    970      0.449       667    0.0051   1.000-1.017   1.000       0.018
-   3.19    3       3        2443   1621   1944   1731   1313    940   1030      0.459       680    0.0051   1.001-1.018   1.000       0.019
-   3.50    4       4        2689   1787   2111   1907   1444   1034   1133      0.477       701    0.0053   1.001-1.020   1.000       0.020
-   4.00    6      21        3098   2046   2368   2152   1660   1193   1304      0.506       735    0.0054   1.001-1.023   1.000       0.022
-   4.50    6      40        3475   2295   2636   2384   1909   1365   1481      0.533       769    0.0057   1.001-1.026   1.000       0.025
-   5.00    7      54        3851   2537   2901   2618   2128   1552   1677      0.559       802    0.0059   1.001-1.029   1.000       0.028
-   5.50    7      63        4223   2774   3165   2851   2312   1764   1894      0.584       835    0.0062   1.001-1.032   1.000       0.031
-   6.00    7      71        4594   3010   3422   3079   2492   1988   2133      0.609       868    0.0065   1.001-1.035   1.000       0.034
-   6.50    8      85        4957   3241   3676   3308   2680   2176   2415      0.634       901    0.0068   1.001-1.037   1.000       0.037
-   7.00    8      89        5321   3471   3924   3528   2862   2347   2731      0.659       941    0.0071   1.001-1.041   1.000       0.040
-   7.50    9      99        5681   3699   4169   3744   3042   2521   3057      0.684       983    0.0075   1.001-1.045   1.000       0.044
-   8.00    8     105        6037   3924   4416   3964   3230   2693   3355      0.709      1026    0.0079   1.001-1.048   1.000       0.047
-   8.50    9     110        6394   4149   4662   4184   3419   2880   3639      0.733      1069    0.0083   1.001-1.052   1.000       0.051
-   9.00    9     114        6751   4372   4907   4403   3609   3069   3918      0.759      1112    0.0087   1.001-1.056   1.000       0.054
-   9.50    9     119        7106   4594   5150   4623   3799   3254   4198      0.784      1157    0.0092   1.001-1.060   1.000       0.057
-  10.00    8     121        7459   4813   5394   4843   3992   3442   4476      0.809      1202    0.0097   1.001-1.064   1.000       0.061
-  10.50   10     123        7813   5032   5636   5062   4184   3632   4752      0.834      1247    0.0102   1.000-1.068   1.000       0.067
-  11.00   10     127        8168   5249   5878   5281   4375   3819   5029      0.860      1293    0.0107   1.000-1.073   1.000       0.073
-  11.50   10     129        8524   5466   6119   5498   4566   4006   5303      0.887      1340    0.0113   1.000-1.077   1.000       0.080
-  12.00   10     130        8882   5682   6360   5716   4757   4194   5576      0.913      1386    0.0118   1.000-1.081   1.000       0.087
+  lam   iters  cracked el   G1..G7 midspan M_LL (kN m)                     max M/M_r  max R (kN)  max theta   kv factor     min contact  max H/(mu R)   [contact 1 = no uplift; H/(mu R) < 1 = no slip]
+   0.25    1       0         191    127    151    134    102     74     82      0.298       478    0.0041   1.000-1.000   1.000       0.002
+   0.50    1       0         383    254    301    269    205    148    163      0.312       495    0.0042   1.000-1.000   1.000       0.004
+   1.00    1       0         766    508    607    541    411    295    325      0.339       529    0.0044   1.000-1.000   1.000       0.008
+   1.50    1       0        1149    763    914    813    617    442    486      0.366       564    0.0045   1.000-1.000   1.000       0.011
+   2.00    1       0        1533   1017   1221   1085    823    590    647      0.394       598    0.0047   1.000-1.000   1.000       0.013
+   2.50    1       0        1916   1271   1526   1357   1030    737    808      0.421       632    0.0049   1.000-1.000   1.000       0.016
+   3.00    1       0        2300   1525   1832   1628   1236    884    970      0.449       667    0.0051   1.000-1.000   1.000       0.018
+   3.19    3       3        2444   1621   1944   1731   1313    940   1030      0.459       680    0.0051   1.000-1.000   1.000       0.019
+   3.50    4       4        2689   1787   2111   1907   1444   1034   1133      0.477       701    0.0053   1.000-1.000   1.000       0.020
+   4.00    6      21        3099   2046   2368   2152   1660   1193   1304      0.506       735    0.0054   1.000-1.000   1.000       0.022
+   4.50    6      40        3476   2295   2636   2384   1909   1365   1481      0.533       769    0.0057   1.000-1.000   1.000       0.025
+   5.00    7      54        3851   2537   2901   2618   2128   1553   1677      0.559       802    0.0059   1.000-1.000   1.000       0.028
+   5.50    7      63        4223   2774   3165   2851   2312   1764   1895      0.584       835    0.0062   1.000-1.000   1.000       0.031
+   6.00    7      71        4595   3010   3422   3078   2492   1988   2134      0.609       868    0.0065   1.000-1.000   1.000       0.034
+   6.50    8      85        4958   3241   3676   3308   2680   2176   2416      0.634       901    0.0068   1.000-1.000   1.000       0.037
+   7.00    8      89        5322   3472   3924   3528   2862   2347   2732      0.659       942    0.0071   1.000-1.000   1.000       0.040
+   7.50    9      99        5682   3699   4169   3744   3043   2521   3058      0.684       984    0.0075   1.000-1.000   1.000       0.044
+   8.00    8     105        6038   3924   4416   3964   3230   2694   3356      0.709      1026    0.0079   1.000-1.000   1.000       0.047
+   8.50    9     110        6395   4149   4662   4184   3419   2880   3640      0.734      1069    0.0083   1.000-1.000   1.000       0.051
+   9.00    9     114        6752   4373   4907   4403   3609   3069   3919      0.759      1112    0.0087   1.000-1.000   1.000       0.054
+   9.50    9     119        7107   4595   5151   4623   3800   3254   4199      0.784      1156    0.0092   1.000-1.000   1.000       0.057
+  10.00    8     121        7460   4814   5394   4843   3992   3442   4477      0.809      1200    0.0097   1.000-1.000   1.000       0.061
+  10.50   10     123        7815   5033   5637   5063   4185   3633   4753      0.834      1245    0.0102   1.000-1.000   1.000       0.067
+  11.00   10     127        8170   5250   5879   5281   4376   3820   5030      0.860      1291    0.0107   1.000-1.000   1.000       0.073
+  11.50   10     129        8527   5467   6120   5499   4567   4007   5305      0.887      1337    0.0113   1.000-1.000   1.000       0.080
+  12.00   10     130        8884   5683   6361   5717   4758   4195   5578      0.913      1383    0.0118   1.000-1.000   1.000       0.086
 
 tracked baseline modes: [('M1', np.float64(3.723)), ('M2', np.float64(4.254)), ('M3', np.float64(8.26)), ('M5', np.float64(13.404)), ('M6', np.float64(13.647)), ('FE(2, 2)', np.float64(15.423)), ('FE(1, 3)', np.float64(18.834)), ('FE(2, 3)', np.float64(23.205))]
 lam  0.25 mass only          OMA: df%  -1.69  -0.30  -1.65  -1.38  -0.17  MAC_acc 0.999 0.998 0.998  minCOMAC 0.980  step MAC min 0.977  | real change (strain gauges): dkappa%   5.1   3.6   4.6
-lam  0.25 under load         OMA: df%  -1.68  -0.30  -1.65  -1.37  -0.16  MAC_acc 0.999 0.998 0.998  minCOMAC 0.980  step MAC min 0.977  | real change (strain gauges): dkappa%   5.1   3.6   4.6
-lam  0.25 jacked             OMA: df%  +0.00  +0.00  +0.00  +0.01  +0.01  MAC_acc 1.000 1.000 1.000  minCOMAC 1.000  step MAC min 1.000  | real change (strain gauges): dkappa%   0.0   0.0   0.0
-lam  0.25 jacked (tangent)   OMA: df%  +0.00  +0.00  +0.00  +0.01  +0.01  MAC_acc 1.000 1.000 1.000  minCOMAC 1.000  step MAC min 1.000  | real change (strain gauges): dkappa%   0.0   0.0   0.0
+lam  0.25 under load         OMA: df%  -1.69  -0.30  -1.65  -1.38  -0.17  MAC_acc 0.999 0.998 0.998  minCOMAC 0.980  step MAC min 0.977  | real change (strain gauges): dkappa%   5.1   3.6   4.6
+lam  0.25 jacked             OMA: df%  -0.00  -0.00  -0.00  -0.00  -0.00  MAC_acc 1.000 1.000 1.000  minCOMAC 1.000  step MAC min 1.000  | real change (strain gauges): dkappa%   0.0   0.0   0.0
+lam  0.25 jacked (tangent)   OMA: df%  -0.00  +0.00  -0.00  -0.00  +0.00  MAC_acc 1.000 1.000 1.000  minCOMAC 1.000  step MAC min 1.000  | real change (strain gauges): dkappa%   0.0   0.0   0.0
 lam  0.25 after unload       OMA: df%  -0.00  -0.00  -0.00  +0.00  -0.00  MAC_acc 1.000 1.000 1.000  minCOMAC 1.000  step MAC min 1.000  | real change (strain gauges): dkappa%   0.0   0.0   0.0
 lam  0.50 mass only          OMA: df%  -3.34  -0.56  -3.12  -2.97  -0.30  MAC_acc 0.996 0.995 0.993  minCOMAC 0.952  step MAC min 0.993  | real change (strain gauges): dkappa%   9.4   6.7   8.9
-lam  0.50 under load         OMA: df%  -3.33  -0.55  -3.12  -2.94  -0.28  MAC_acc 0.996 0.995 0.993  minCOMAC 0.952  step MAC min 0.993  | real change (strain gauges): dkappa%   9.4   6.7   8.8
-lam  0.50 jacked             OMA: df%  +0.01  +0.01  +0.01  +0.02  +0.02  MAC_acc 1.000 1.000 1.000  minCOMAC 1.000  step MAC min 1.000  | real change (strain gauges): dkappa%   0.0   0.0   0.0
-lam  0.50 jacked (tangent)   OMA: df%  +0.01  +0.01  +0.01  +0.02  +0.02  MAC_acc 1.000 1.000 1.000  minCOMAC 1.000  step MAC min 1.000  | real change (strain gauges): dkappa%   0.0   0.0   0.0
+lam  0.50 under load         OMA: df%  -3.34  -0.56  -3.12  -2.97  -0.30  MAC_acc 0.996 0.995 0.993  minCOMAC 0.952  step MAC min 0.993  | real change (strain gauges): dkappa%   9.4   6.7   8.9
+lam  0.50 jacked             OMA: df%  -0.00  -0.00  -0.00  +0.00  -0.00  MAC_acc 1.000 1.000 1.000  minCOMAC 1.000  step MAC min 1.000  | real change (strain gauges): dkappa%   0.0   0.0   0.0
+lam  0.50 jacked (tangent)   OMA: df%  -0.00  +0.00  -0.00  -0.00  +0.00  MAC_acc 1.000 1.000 1.000  minCOMAC 1.000  step MAC min 1.000  | real change (strain gauges): dkappa%   0.0   0.0   0.0
 lam  0.50 after unload       OMA: df%  -0.00  -0.00  -0.00  -0.00  +0.00  MAC_acc 1.000 1.000 1.000  minCOMAC 1.000  step MAC min 1.000  | real change (strain gauges): dkappa%   0.0   0.0   0.0
 lam  1.00 mass only          OMA: df%  -6.52  -1.01  -5.61  -6.40  -0.51  MAC_acc 0.988 0.986 0.978  minCOMAC 0.904  step MAC min 0.987  | real change (strain gauges): dkappa%  16.2  11.8  16.9
-lam  1.00 under load         OMA: df%  -6.53  -1.08  -6.27  -6.43  -0.52  MAC_acc 0.988 0.986 0.978  minCOMAC 0.903  step MAC min 0.986  | real change (strain gauges): dkappa%  16.4  11.6  18.2
-lam  1.00 jacked             OMA: df%  +0.00  -0.07  -0.68  +0.03  +0.00  MAC_acc 1.000 1.000 1.000  minCOMAC 1.000  step MAC min 1.000  | real change (strain gauges): dkappa%   0.1   0.2   1.2
-lam  1.00 jacked (tangent)   OMA: df%  +0.00  -0.07  -0.68  +0.03  +0.00  MAC_acc 1.000 1.000 1.000  minCOMAC 1.000  step MAC min 1.000  | real change (strain gauges): dkappa%   0.1   0.2   1.2
+lam  1.00 under load         OMA: df%  -6.54  -1.10  -6.28  -6.48  -0.56  MAC_acc 0.987 0.986 0.978  minCOMAC 0.903  step MAC min 0.986  | real change (strain gauges): dkappa%  16.4  11.7  18.2
+lam  1.00 jacked             OMA: df%  -0.01  -0.09  -0.69  -0.02  -0.04  MAC_acc 1.000 1.000 1.000  minCOMAC 1.000  step MAC min 1.000  | real change (strain gauges): dkappa%   0.1   0.2   1.2
+lam  1.00 jacked (tangent)   OMA: df%  -0.01  -0.09  -0.69  -0.02  -0.04  MAC_acc 1.000 1.000 1.000  minCOMAC 1.000  step MAC min 1.000  | real change (strain gauges): dkappa%   0.1   0.2   1.2
 lam  1.00 after unload       OMA: df%  -0.00  -0.00  -0.00  -0.00  -0.00  MAC_acc 1.000 1.000 1.000  minCOMAC 1.000  step MAC min 1.000  | real change (strain gauges): dkappa%   0.0   0.0   0.0
 lam  1.50 mass only          OMA: df%  -9.51  -1.39  -7.65  -9.89  -0.72  MAC_acc 0.980 0.978 0.959  minCOMAC 0.868  step MAC min 0.994  | real change (strain gauges): dkappa%  21.3  15.4  24.3
-lam  1.50 under load         OMA: df%  -9.53  -1.51  -8.60  -9.98  -0.74  MAC_acc 0.979 0.978 0.958  minCOMAC 0.865  step MAC min 0.994  | real change (strain gauges): dkappa%  21.6  15.3  26.2
-lam  1.50 jacked             OMA: df%  +0.00  -0.11  -0.99  +0.04  -0.00  MAC_acc 1.000 1.000 1.000  minCOMAC 1.000  step MAC min 1.000  | real change (strain gauges): dkappa%   0.2   0.4   1.8
-lam  1.50 jacked (tangent)   OMA: df%  +0.00  -0.11  -0.99  +0.04  -0.00  MAC_acc 1.000 1.000 1.000  minCOMAC 1.000  step MAC min 1.000  | real change (strain gauges): dkappa%   0.2   0.4   1.8
+lam  1.50 under load         OMA: df%  -9.55  -1.53  -8.61 -10.04  -0.79  MAC_acc 0.979 0.977 0.958  minCOMAC 0.865  step MAC min 0.994  | real change (strain gauges): dkappa%  21.6  15.3  26.2
+lam  1.50 jacked             OMA: df%  -0.01  -0.13  -1.01  -0.03  -0.07  MAC_acc 1.000 1.000 1.000  minCOMAC 1.000  step MAC min 1.000  | real change (strain gauges): dkappa%   0.2   0.3   1.8
+lam  1.50 jacked (tangent)   OMA: df%  -0.01  -0.13  -1.01  -0.03  -0.07  MAC_acc 1.000 1.000 1.000  minCOMAC 1.000  step MAC min 1.000  | real change (strain gauges): dkappa%   0.2   0.3   1.8
 lam  1.50 after unload       OMA: df%  -0.00  -0.00  -0.00  +0.00  -0.00  MAC_acc 1.000 1.000 1.000  minCOMAC 1.000  step MAC min 1.000  | real change (strain gauges): dkappa%   0.0   0.0   0.0
 lam  2.00 mass only          OMA: df% -12.29  -1.74  -9.34 -13.23  -0.95  MAC_acc 0.972 0.970 0.938  minCOMAC 0.841  step MAC min 0.996  | real change (strain gauges): dkappa%  25.2  18.2  30.9
-lam  2.00 under load         OMA: df% -12.32  -1.86 -10.35 -13.35  -0.96  MAC_acc 0.972 0.970 0.937  minCOMAC 0.838  step MAC min 0.996  | real change (strain gauges): dkappa%  25.6  18.0  32.9
-lam  2.00 jacked             OMA: df%  +0.01  -0.12  -1.07  +0.05  +0.01  MAC_acc 1.000 1.000 1.000  minCOMAC 1.000  step MAC min 1.000  | real change (strain gauges): dkappa%   0.2   0.4   1.9
-lam  2.00 jacked (tangent)   OMA: df%  +0.01  -0.12  -1.07  +0.05  +0.01  MAC_acc 1.000 1.000 1.000  minCOMAC 1.000  step MAC min 1.000  | real change (strain gauges): dkappa%   0.2   0.4   1.9
+lam  2.00 under load         OMA: df% -12.35  -1.88 -10.37 -13.42  -1.03  MAC_acc 0.972 0.970 0.937  minCOMAC 0.837  step MAC min 0.996  | real change (strain gauges): dkappa%  25.6  18.1  32.9
+lam  2.00 jacked             OMA: df%  -0.01  -0.15  -1.10  -0.03  -0.07  MAC_acc 1.000 1.000 1.000  minCOMAC 1.000  step MAC min 1.000  | real change (strain gauges): dkappa%   0.2   0.3   2.0
+lam  2.00 jacked (tangent)   OMA: df%  -0.01  -0.15  -1.10  -0.03  -0.07  MAC_acc 1.000 1.000 1.000  minCOMAC 1.000  step MAC min 1.000  | real change (strain gauges): dkappa%   0.2   0.3   2.0
 lam  2.00 after unload       OMA: df%  -0.00  -0.00  -0.00  -0.00  +0.00  MAC_acc 1.000 1.000 1.000  minCOMAC 1.000  step MAC min 1.000  | real change (strain gauges): dkappa%   0.0   0.0   0.0
 lam  2.50 mass only          OMA: df% -14.88  -2.06 -10.77 -16.33  -1.18  MAC_acc 0.966 0.964 0.918  minCOMAC 0.821  step MAC min 0.997  | real change (strain gauges): dkappa%  28.3  20.2  36.6
-lam  2.50 under load         OMA: df% -14.92  -2.18 -11.80 -16.48  -1.19  MAC_acc 0.965 0.964 0.917  minCOMAC 0.816  step MAC min 0.997  | real change (strain gauges): dkappa%  28.7  20.0  38.7
-lam  2.50 jacked             OMA: df%  +0.01  -0.12  -1.10  +0.07  +0.03  MAC_acc 1.000 1.000 1.000  minCOMAC 0.999  step MAC min 1.000  | real change (strain gauges): dkappa%   0.2   0.4   1.9
-lam  2.50 jacked (tangent)   OMA: df%  +0.01  -0.12  -1.10  +0.07  +0.03  MAC_acc 1.000 1.000 1.000  minCOMAC 0.999  step MAC min 1.000  | real change (strain gauges): dkappa%   0.2   0.4   1.9
+lam  2.50 under load         OMA: df% -14.94  -2.21 -11.82 -16.56  -1.28  MAC_acc 0.965 0.964 0.917  minCOMAC 0.816  step MAC min 0.997  | real change (strain gauges): dkappa%  28.8  20.1  38.7
+lam  2.50 jacked             OMA: df%  -0.01  -0.15  -1.13  -0.03  -0.08  MAC_acc 1.000 1.000 1.000  minCOMAC 1.000  step MAC min 1.000  | real change (strain gauges): dkappa%   0.2   0.4   2.0
+lam  2.50 jacked (tangent)   OMA: df%  -0.01  -0.15  -1.13  -0.03  -0.08  MAC_acc 1.000 1.000 1.000  minCOMAC 1.000  step MAC min 1.000  | real change (strain gauges): dkappa%   0.2   0.4   2.0
 lam  2.50 after unload       OMA: df%  -0.00  +0.00  -0.00  -0.00  -0.00  MAC_acc 1.000 1.000 1.000  minCOMAC 1.000  step MAC min 1.000  | real change (strain gauges): dkappa%   0.0   0.0   0.0
 lam  3.00 mass only          OMA: df% -17.29  -2.36 -12.00 -19.19  -1.44  MAC_acc 0.960 0.959 0.899  minCOMAC 0.804  step MAC min 0.998  | real change (strain gauges): dkappa%  30.9  21.8  41.7
-lam  3.00 under load         OMA: df% -17.33  -2.48 -13.02 -19.35  -1.43  MAC_acc 0.959 0.959 0.898  minCOMAC 0.800  step MAC min 0.998  | real change (strain gauges): dkappa%  31.3  21.5  43.7
-lam  3.00 jacked             OMA: df%  +0.02  -0.11  -1.11  +0.10  +0.05  MAC_acc 1.000 1.000 1.000  minCOMAC 0.999  step MAC min 1.000  | real change (strain gauges): dkappa%   0.2   0.5   2.0
-lam  3.00 jacked (tangent)   OMA: df%  +0.02  -0.11  -1.11  +0.10  +0.05  MAC_acc 1.000 1.000 1.000  minCOMAC 0.999  step MAC min 1.000  | real change (strain gauges): dkappa%   0.2   0.5   2.0
+lam  3.00 under load         OMA: df% -17.36  -2.52 -13.05 -19.45  -1.54  MAC_acc 0.959 0.959 0.898  minCOMAC 0.799  step MAC min 0.998  | real change (strain gauges): dkappa%  31.3  21.7  43.8
+lam  3.00 jacked             OMA: df%  -0.01  -0.15  -1.14  -0.03  -0.08  MAC_acc 1.000 1.000 1.000  minCOMAC 1.000  step MAC min 1.000  | real change (strain gauges): dkappa%   0.2   0.4   2.1
+lam  3.00 jacked (tangent)   OMA: df%  -0.01  -0.15  -1.14  -0.03  -0.08  MAC_acc 1.000 1.000 1.000  minCOMAC 1.000  step MAC min 1.000  | real change (strain gauges): dkappa%   0.2   0.4   2.1
 lam  3.00 after unload       OMA: df%  -0.00  -0.00  -0.00  -0.00  -0.00  MAC_acc 1.000 1.000 1.000  minCOMAC 1.000  step MAC min 1.000  | real change (strain gauges): dkappa%   0.0   0.0   0.0
 lam  3.19 mass only          OMA: df% -18.14  -2.48 -12.42 -20.20  -1.54  MAC_acc 0.958 0.957 0.892  minCOMAC 0.799  step MAC min 1.000  | real change (strain gauges): dkappa%  31.7  22.3  43.4
-lam  3.19 under load         OMA: df% -18.19  -2.59 -13.44 -20.37  -1.53  MAC_acc 0.957 0.957 0.891  minCOMAC 0.794  step MAC min 1.000  | real change (strain gauges): dkappa%  32.1  22.0  45.4
-lam  3.19 jacked             OMA: df%  +0.01  -0.11  -1.11  +0.10  +0.06  MAC_acc 1.000 1.000 1.000  minCOMAC 0.999  step MAC min 1.000  | real change (strain gauges): dkappa%   0.7   0.5   2.0
-lam  3.19 jacked (tangent)   OMA: df%  -2.50  -0.48  -1.58  -0.03  +0.04  MAC_acc 0.993 0.996 0.999  minCOMAC 0.995  step MAC min 0.995  | real change (strain gauges): dkappa% 171.4  46.0 128.2
+lam  3.19 under load         OMA: df% -18.23  -2.63 -13.46 -20.46  -1.65  MAC_acc 0.957 0.957 0.891  minCOMAC 0.794  step MAC min 1.000  | real change (strain gauges): dkappa%  32.2  22.2  45.5
+lam  3.19 jacked             OMA: df%  -0.02  -0.15  -1.15  -0.04  -0.08  MAC_acc 1.000 1.000 1.000  minCOMAC 1.000  step MAC min 1.000  | real change (strain gauges): dkappa%   0.6   0.4   2.1
+lam  3.19 jacked (tangent)   OMA: df%  -2.54  -0.52  -1.61  -0.17  -0.10  MAC_acc 0.993 0.996 0.999  minCOMAC 0.995  step MAC min 0.995  | real change (strain gauges): dkappa% 171.2  45.6 127.9
 lam  3.19 after unload       OMA: df%  -0.00  -0.00  -0.00  -0.00  -0.00  MAC_acc 1.000 1.000 1.000  minCOMAC 1.000  step MAC min 1.000  | real change (strain gauges): dkappa%   0.0   0.0   0.0
 lam  3.50 mass only          OMA: df% -19.53  -2.66 -13.07 -21.82  -1.71  MAC_acc 0.955 0.955 0.881  minCOMAC 0.791  step MAC min 0.999  | real change (strain gauges): dkappa%  33.0  23.0  46.1
-lam  3.50 under load         OMA: df% -19.64  -2.78 -14.09 -22.00  -1.70  MAC_acc 0.954 0.955 0.880  minCOMAC 0.786  step MAC min 0.999  | real change (strain gauges): dkappa%  33.5  22.8  48.1
-lam  3.50 jacked             OMA: df%  -0.04  -0.12  -1.13  +0.11  +0.08  MAC_acc 1.000 1.000 1.000  minCOMAC 0.999  step MAC min 1.000  | real change (strain gauges): dkappa%   5.2   1.9   5.3
-lam  3.50 jacked (tangent)   OMA: df%  -2.88  -0.51  -1.64  -0.15  +0.02  MAC_acc 0.992 0.995 0.999  minCOMAC 0.994  step MAC min 0.999  | real change (strain gauges): dkappa% 131.4  33.4  99.5
+lam  3.50 under load         OMA: df% -19.68  -2.82 -14.12 -22.10  -1.83  MAC_acc 0.954 0.955 0.880  minCOMAC 0.786  step MAC min 0.999  | real change (strain gauges): dkappa%  33.6  22.9  48.2
+lam  3.50 jacked             OMA: df%  -0.08  -0.16  -1.17  -0.04  -0.08  MAC_acc 1.000 1.000 1.000  minCOMAC 1.000  step MAC min 1.000  | real change (strain gauges): dkappa%   5.2   1.7   5.2
+lam  3.50 jacked (tangent)   OMA: df%  -2.92  -0.56  -1.68  -0.31  -0.12  MAC_acc 0.991 0.995 0.999  minCOMAC 0.993  step MAC min 0.999  | real change (strain gauges): dkappa% 131.3  33.0  99.2
 lam  3.50 after unload       OMA: df%  -0.01  -0.00  -0.00  -0.00  -0.00  MAC_acc 1.000 1.000 1.000  minCOMAC 1.000  step MAC min 1.000  | real change (strain gauges): dkappa%   0.3   0.1   0.2
 lam  4.00 mass only          OMA: df% -21.61  -2.94 -14.01 -24.24  -2.01  MAC_acc 0.951 0.952 0.865  minCOMAC 0.779  step MAC min 0.999  | real change (strain gauges): dkappa%  34.7  23.9  50.1
-lam  4.00 under load         OMA: df% -22.09  -3.12 -15.06 -24.46  -1.99  MAC_acc 0.948 0.951 0.863  minCOMAC 0.773  step MAC min 0.999  | real change (strain gauges): dkappa%  35.7  22.6  53.1
-lam  4.00 jacked             OMA: df%  -0.39  -0.21  -1.20  +0.12  +0.09  MAC_acc 1.000 1.000 1.000  minCOMAC 0.999  step MAC min 1.000  | real change (strain gauges): dkappa%  13.6   3.8  11.2
-lam  4.00 jacked (tangent)   OMA: df% -23.53  -5.71  -4.11  -3.01  -0.67  MAC_acc 0.793 0.836 0.994  minCOMAC 0.834  step MAC min 0.843  | real change (strain gauges): dkappa% 236.3  54.9 120.1
+lam  4.00 under load         OMA: df% -22.13  -3.16 -15.10 -24.56  -2.14  MAC_acc 0.948 0.951 0.863  minCOMAC 0.773  step MAC min 0.999  | real change (strain gauges): dkappa%  35.8  22.7  53.2
+lam  4.00 jacked             OMA: df%  -0.44  -0.27  -1.25  -0.06  -0.08  MAC_acc 1.000 1.000 1.000  minCOMAC 1.000  step MAC min 1.000  | real change (strain gauges): dkappa%  13.6   3.6  11.1
+lam  4.00 jacked (tangent)   OMA: df% -23.56  -5.73  -4.14  -3.21  -0.79  MAC_acc 0.793 0.835 0.994  minCOMAC 0.834  step MAC min 0.844  | real change (strain gauges): dkappa% 236.1  54.9 119.6
 lam  4.00 after unload       OMA: df%  -0.04  -0.01  -0.01  -0.00  -0.00  MAC_acc 1.000 1.000 1.000  minCOMAC 1.000  step MAC min 1.000  | real change (strain gauges): dkappa%   0.6   0.2   0.4
 lam  4.50 mass only          OMA: df% -23.55  -3.22 -14.86 -26.46  -2.32  MAC_acc 0.947 0.949 0.850  minCOMAC 0.768  step MAC min 0.999  | real change (strain gauges): dkappa%  36.2  24.7  53.6
-lam  4.50 under load         OMA: df% -25.12  -3.87 -16.12 -26.84  -2.44  MAC_acc 0.935 0.945 0.850  minCOMAC 0.759  step MAC min 0.998  | real change (strain gauges): dkappa%  44.7  23.9  57.9
-lam  4.50 jacked             OMA: df%  -1.57  -0.98  -1.40  -0.03  -0.05  MAC_acc 0.994 0.996 1.000  minCOMAC 0.995  step MAC min 0.993  | real change (strain gauges): dkappa%  23.7   7.4  16.8
-lam  4.50 jacked (tangent)   OMA: df% -34.74  -8.26  -4.87 -18.22  -2.72  MAC_acc 0.769 0.811 0.991  minCOMAC 0.607  step MAC min 0.816  | real change (strain gauges): dkappa% 103.6 157.0 163.6
+lam  4.50 under load         OMA: df% -25.16  -3.92 -16.16 -26.95  -2.62  MAC_acc 0.934 0.945 0.850  minCOMAC 0.759  step MAC min 0.998  | real change (strain gauges): dkappa%  44.5  24.0  57.9
+lam  4.50 jacked             OMA: df%  -1.62  -1.03  -1.45  -0.24  -0.24  MAC_acc 0.994 0.996 1.000  minCOMAC 0.993  step MAC min 0.992  | real change (strain gauges): dkappa%  23.6   7.6  16.6
+lam  4.50 jacked (tangent)   OMA: df% -34.76  -8.29  -4.90 -18.35  -2.83  MAC_acc 0.769 0.811 0.991  minCOMAC 0.603  step MAC min 0.826  | real change (strain gauges): dkappa% 103.5 156.9 163.0
 lam  4.50 after unload       OMA: df%  -0.17  -0.10  -0.03  -0.04  -0.03  MAC_acc 1.000 1.000 1.000  minCOMAC 1.000  step MAC min 1.000  | real change (strain gauges): dkappa%   1.5   0.7   0.6
 lam  5.00 mass only          OMA: df% -25.37  -3.50 -15.61 -28.51  -2.66  MAC_acc 0.944 0.947 0.837  minCOMAC 0.753  step MAC min 0.999  | real change (strain gauges): dkappa%  37.5  25.2  56.7
-lam  5.00 under load         OMA: df% -28.39  -4.80 -17.16 -29.26  -3.11  MAC_acc 0.920 0.940 0.838  minCOMAC 0.743  step MAC min 0.996  | real change (strain gauges): dkappa%  51.3  27.3  62.4
-lam  5.00 jacked             OMA: df%  -3.37  -1.89  -1.65  -0.48  -0.32  MAC_acc 0.978 0.985 1.000  minCOMAC 0.968  step MAC min 0.969  | real change (strain gauges): dkappa%  31.2  13.4  21.0
-lam  5.00 jacked (tangent)   OMA: df% -38.21  -9.89  -5.26 -26.75  -6.63  MAC_acc 0.785 0.828 0.986  minCOMAC 0.497  step MAC min 0.959  | real change (strain gauges): dkappa%  76.4  56.8  88.8
+lam  5.00 under load         OMA: df% -28.44  -4.85 -17.20 -29.37  -3.32  MAC_acc 0.920 0.940 0.839  minCOMAC 0.742  step MAC min 0.996  | real change (strain gauges): dkappa%  51.1  27.3  62.5
+lam  5.00 jacked             OMA: df%  -3.43  -1.94  -1.70  -0.74  -0.49  MAC_acc 0.977 0.984 1.000  minCOMAC 0.954  step MAC min 0.972  | real change (strain gauges): dkappa%  31.1  13.5  20.8
+lam  5.00 jacked (tangent)   OMA: df% -38.23  -9.92  -5.29 -26.85  -6.76  MAC_acc 0.785 0.828 0.986  minCOMAC 0.495  step MAC min 0.960  | real change (strain gauges): dkappa%  76.3  56.7  88.4
 lam  5.00 after unload       OMA: df%  -0.34  -0.23  -0.05  -0.12  -0.09  MAC_acc 1.000 1.000 1.000  minCOMAC 0.998  step MAC min 0.999  | real change (strain gauges): dkappa%   2.7   1.4   0.7
 lam  5.50 mass only          OMA: df% -27.07  -3.77 -16.30 -30.40  -3.01  MAC_acc 0.941 0.945 0.825  minCOMAC 0.733  step MAC min 0.999  | real change (strain gauges): dkappa%  38.6  25.7  59.6
-lam  5.50 under load         OMA: df% -31.63  -5.76 -18.12 -31.72  -4.03  MAC_acc 0.908 0.936 0.828  minCOMAC 0.721  step MAC min 0.995  | real change (strain gauges): dkappa%  56.2  30.3  66.7
-lam  5.50 jacked             OMA: df%  -5.46  -2.73  -1.91  -1.29  -0.61  MAC_acc 0.956 0.968 1.000  minCOMAC 0.908  step MAC min 0.972  | real change (strain gauges): dkappa%  40.6  18.6  24.5
-lam  5.50 jacked (tangent)   OMA: df% -39.50 -10.30  -5.37 -29.61  -9.83  MAC_acc 0.793 0.834 0.982  minCOMAC 0.526  step MAC min 0.983  | real change (strain gauges): dkappa%  74.3  49.9  83.7
+lam  5.50 under load         OMA: df% -31.67  -5.82 -18.16 -31.84  -4.27  MAC_acc 0.907 0.936 0.828  minCOMAC 0.721  step MAC min 0.995  | real change (strain gauges): dkappa%  56.0  30.3  66.8
+lam  5.50 jacked             OMA: df%  -5.53  -2.79  -1.96  -1.60  -0.77  MAC_acc 0.956 0.968 1.000  minCOMAC 0.893  step MAC min 0.977  | real change (strain gauges): dkappa%  40.5  18.7  24.3
+lam  5.50 jacked (tangent)   OMA: df% -39.53 -10.33  -5.41 -29.71  -9.95  MAC_acc 0.792 0.834 0.982  minCOMAC 0.525  step MAC min 0.983  | real change (strain gauges): dkappa%  74.2  49.9  83.3
 lam  5.50 after unload       OMA: df%  -0.52  -0.34  -0.08  -0.20  -0.14  MAC_acc 0.999 1.000 1.000  minCOMAC 0.996  step MAC min 0.999  | real change (strain gauges): dkappa%   3.9   2.0   0.9
 lam  6.00 mass only          OMA: df% -28.67  -4.03 -16.93 -32.16  -3.39  MAC_acc 0.938 0.944 0.814  minCOMAC 0.715  step MAC min 0.999  | real change (strain gauges): dkappa%  39.6  26.0  62.2
-lam  6.00 under load         OMA: df% -34.65  -6.71 -19.00 -34.13  -5.09  MAC_acc 0.897 0.934 0.817  minCOMAC 0.699  step MAC min 0.996  | real change (strain gauges): dkappa%  60.0  32.8  70.9
-lam  6.00 jacked             OMA: df%  -7.57  -3.48  -2.15  -2.28  -0.85  MAC_acc 0.935 0.952 0.999  minCOMAC 0.856  step MAC min 0.989  | real change (strain gauges): dkappa%  47.8  23.1  27.5
-lam  6.00 jacked (tangent)   OMA: df% -41.79 -14.37  -5.60 -33.45 -11.31  MAC_acc 0.829 0.871 0.965  minCOMAC 0.462  step MAC min 0.991  | real change (strain gauges): dkappa%  60.7 114.2 111.9
+lam  6.00 under load         OMA: df% -34.69  -6.76 -19.04 -34.24  -5.35  MAC_acc 0.897 0.934 0.818  minCOMAC 0.699  step MAC min 0.996  | real change (strain gauges): dkappa%  59.7  32.8  70.9
+lam  6.00 jacked             OMA: df%  -7.64  -3.54  -2.20  -2.61  -1.02  MAC_acc 0.935 0.951 0.999  minCOMAC 0.845  step MAC min 0.992  | real change (strain gauges): dkappa%  47.7  23.3  27.2
+lam  6.00 jacked (tangent)   OMA: df% -41.81 -14.40  -5.64 -33.53 -11.44  MAC_acc 0.829 0.870 0.965  minCOMAC 0.461  step MAC min 0.991  | real change (strain gauges): dkappa%  60.6 114.1 111.9
 lam  6.00 after unload       OMA: df%  -0.71  -0.48  -0.11  -0.33  -0.23  MAC_acc 0.999 0.999 1.000  minCOMAC 0.990  step MAC min 0.997  | real change (strain gauges): dkappa%   5.2   2.8   1.1
 lam  6.50 mass only          OMA: df% -30.17  -4.30 -17.50 -33.80  -3.78  MAC_acc 0.935 0.943 0.804  minCOMAC 0.699  step MAC min 0.999  | real change (strain gauges): dkappa%  40.5  26.3  64.6
-lam  6.50 under load         OMA: df% -37.52  -7.76 -19.81 -36.48  -6.35  MAC_acc 0.889 0.934 0.808  minCOMAC 0.677  step MAC min 0.996  | real change (strain gauges): dkappa%  62.6  35.0  75.2
-lam  6.50 jacked             OMA: df%  -9.76  -4.29  -2.37  -3.52  -1.14  MAC_acc 0.919 0.939 0.999  minCOMAC 0.815  step MAC min 0.994  | real change (strain gauges): dkappa%  52.4  26.6  30.0
-lam  6.50 jacked (tangent)   OMA: df% -43.67 -16.28  -5.71 -36.52 -16.79  MAC_acc 0.851 0.889 0.944  minCOMAC 0.564  step MAC min 0.976  | real change (strain gauges): dkappa%  59.0  49.5 124.4
+lam  6.50 under load         OMA: df% -37.57  -7.82 -19.86 -36.59  -6.62  MAC_acc 0.889 0.934 0.808  minCOMAC 0.674  step MAC min 0.997  | real change (strain gauges): dkappa%  62.4  35.0  75.3
+lam  6.50 jacked             OMA: df%  -9.83  -4.35  -2.43  -3.87  -1.31  MAC_acc 0.918 0.938 0.999  minCOMAC 0.807  step MAC min 0.995  | real change (strain gauges): dkappa%  52.2  26.7  29.7
+lam  6.50 jacked (tangent)   OMA: df% -43.69 -16.31  -5.75 -36.59 -16.91  MAC_acc 0.851 0.889 0.944  minCOMAC 0.562  step MAC min 0.976  | real change (strain gauges): dkappa%  58.9  49.4 124.6
 lam  6.50 after unload       OMA: df%  -0.94  -0.60  -0.14  -0.48  -0.29  MAC_acc 0.998 0.999 1.000  minCOMAC 0.984  step MAC min 0.999  | real change (strain gauges): dkappa%   6.4   3.5   1.2
 lam  7.00 mass only          OMA: df% -31.59  -4.56 -18.04 -35.32  -4.19  MAC_acc 0.933 0.942 0.795  minCOMAC 0.685  step MAC min 0.999  | real change (strain gauges): dkappa%  41.3  26.4  66.9
-lam  7.00 under load         OMA: df% -40.21  -8.83 -20.57 -38.80  -7.69  MAC_acc 0.884 0.934 0.798  minCOMAC 0.663  step MAC min 0.998  | real change (strain gauges): dkappa%  64.4  36.7  80.2
-lam  7.00 jacked             OMA: df% -11.90  -5.10  -2.58  -4.82  -1.52  MAC_acc 0.906 0.929 0.999  minCOMAC 0.795  step MAC min 0.998  | real change (strain gauges): dkappa%  55.7  29.0  32.1
-lam  7.00 jacked (tangent)   OMA: df% -43.93 -16.54  -5.88 -37.39 -17.90  MAC_acc 0.855 0.891 0.924  minCOMAC 0.580  step MAC min 0.996  | real change (strain gauges): dkappa%  58.5  47.8 139.8
+lam  7.00 under load         OMA: df% -40.25  -8.89 -20.62 -38.91  -7.98  MAC_acc 0.884 0.934 0.799  minCOMAC 0.664  step MAC min 0.998  | real change (strain gauges): dkappa%  64.1  36.7  80.3
+lam  7.00 jacked             OMA: df% -11.97  -5.16  -2.64  -5.19  -1.70  MAC_acc 0.905 0.928 0.999  minCOMAC 0.789  step MAC min 0.999  | real change (strain gauges): dkappa%  55.5  29.1  31.8
+lam  7.00 jacked (tangent)   OMA: df% -43.96 -16.57  -5.92 -37.47 -18.02  MAC_acc 0.855 0.891 0.923  minCOMAC 0.578  step MAC min 0.996  | real change (strain gauges): dkappa%  58.3  47.8 140.1
 lam  7.00 after unload       OMA: df%  -1.15  -0.72  -0.17  -0.62  -0.35  MAC_acc 0.997 0.998 1.000  minCOMAC 0.979  step MAC min 0.999  | real change (strain gauges): dkappa%   7.5   4.1   1.5
 lam  7.50 mass only          OMA: df% -32.92  -4.82 -18.54 -36.75  -4.62  MAC_acc 0.931 0.941 0.786  minCOMAC 0.671  step MAC min 0.999  | real change (strain gauges): dkappa%  42.0  26.6  69.0
-lam  7.50 under load         OMA: df% -42.69  -9.95 -21.30 -41.02  -9.12  MAC_acc 0.880 0.934 0.789  minCOMAC 0.647  step MAC min 0.998  | real change (strain gauges): dkappa%  65.7  38.1  85.5
-lam  7.50 jacked             OMA: df% -13.93  -5.95  -2.78  -6.21  -1.94  MAC_acc 0.897 0.921 0.998  minCOMAC 0.781  step MAC min 0.999  | real change (strain gauges): dkappa%  57.8  30.7  33.9
-lam  7.50 jacked (tangent)   OMA: df% -48.07 -29.31  -7.88 -39.89 -20.45  MAC_acc 0.964 0.970 0.786  minCOMAC 0.512  step MAC min 0.951  | real change (strain gauges): dkappa%  60.8 138.9 184.7
+lam  7.50 under load         OMA: df% -42.73 -10.02 -21.35 -41.12  -9.42  MAC_acc 0.880 0.934 0.789  minCOMAC 0.647  step MAC min 0.999  | real change (strain gauges): dkappa%  65.4  38.1  85.6
+lam  7.50 jacked             OMA: df% -14.01  -6.01  -2.85  -6.58  -2.13  MAC_acc 0.896 0.921 0.998  minCOMAC 0.776  step MAC min 0.999  | real change (strain gauges): dkappa%  57.6  30.8  33.6
+lam  7.50 jacked (tangent)   OMA: df% -48.09 -29.34  -7.93 -39.97 -20.56  MAC_acc 0.964 0.970 0.783  minCOMAC 0.509  step MAC min 0.951  | real change (strain gauges): dkappa%  60.7 138.8 185.3
 lam  7.50 after unload       OMA: df%  -1.41  -0.89  -0.21  -0.86  -0.48  MAC_acc 0.996 0.997 1.000  minCOMAC 0.961  step MAC min 0.995  | real change (strain gauges): dkappa%   8.7   5.1   1.7
 lam  8.00 mass only          OMA: df% -34.19  -5.08 -19.00 -38.08  -5.07  MAC_acc 0.929 0.941 0.778  minCOMAC 0.659  step MAC min 0.999  | real change (strain gauges): dkappa%  42.6  26.7  71.1
-lam  8.00 under load         OMA: df% -45.04 -11.53 -22.10 -43.13 -10.66  MAC_acc 0.880 0.935 0.780  minCOMAC 0.633  step MAC min 0.999  | real change (strain gauges): dkappa%  66.6  38.8  91.5
-lam  8.00 jacked             OMA: df% -15.98  -7.32  -3.04  -7.69  -2.51  MAC_acc 0.897 0.922 0.998  minCOMAC 0.774  step MAC min 0.999  | real change (strain gauges): dkappa%  58.4  30.9  35.8
-lam  8.00 jacked (tangent)   OMA: df% -50.03 -32.15  -8.01 -40.59 -25.43  MAC_acc 0.987 0.990 0.760  minCOMAC 0.623  step MAC min 0.953  | real change (strain gauges): dkappa%  41.5  70.9 190.1
+lam  8.00 under load         OMA: df% -45.08 -11.60 -22.15 -43.23 -10.96  MAC_acc 0.880 0.935 0.780  minCOMAC 0.633  step MAC min 0.999  | real change (strain gauges): dkappa%  66.4  38.8  91.6
+lam  8.00 jacked             OMA: df% -16.05  -7.39  -3.11  -8.06  -2.72  MAC_acc 0.897 0.921 0.998  minCOMAC 0.767  step MAC min 0.999  | real change (strain gauges): dkappa%  58.2  31.0  35.3
+lam  8.00 jacked (tangent)   OMA: df% -50.05 -32.19  -8.06 -40.67 -25.52  MAC_acc 0.987 0.989 0.756  minCOMAC 0.619  step MAC min 0.953  | real change (strain gauges): dkappa%  41.5  70.8 190.8
 lam  8.00 after unload       OMA: df%  -1.63  -1.02  -0.24  -1.02  -0.54  MAC_acc 0.995 0.996 1.000  minCOMAC 0.953  step MAC min 0.999  | real change (strain gauges): dkappa%   9.7   5.7   1.6
 lam  8.50 mass only          OMA: df% -35.38  -5.34 -19.44 -39.34  -5.53  MAC_acc 0.928 0.941 0.771  minCOMAC 0.648  step MAC min 0.999  | real change (strain gauges): dkappa%  43.2  26.7  73.1
-lam  8.50 under load         OMA: df% -47.23 -13.26 -22.91 -45.13 -12.20  MAC_acc 0.883 0.935 0.771  minCOMAC 0.619  step MAC min 0.998  | real change (strain gauges): dkappa%  67.4  39.0  98.3
-lam  8.50 jacked             OMA: df% -17.94  -8.89  -3.29  -9.13  -3.27  MAC_acc 0.902 0.925 0.998  minCOMAC 0.765  step MAC min 1.000  | real change (strain gauges): dkappa%  58.4  31.1  37.9
-lam  8.50 jacked (tangent)   OMA: df% -50.60 -32.92  -8.36 -41.30 -27.78  MAC_acc 0.991 0.992 0.656  minCOMAC 0.619  step MAC min 0.984  | real change (strain gauges): dkappa%  30.9  55.9 198.4
+lam  8.50 under load         OMA: df% -47.27 -13.33 -22.97 -45.23 -12.50  MAC_acc 0.883 0.935 0.771  minCOMAC 0.620  step MAC min 0.998  | real change (strain gauges): dkappa%  67.1  39.0  98.4
+lam  8.50 jacked             OMA: df% -18.01  -8.96  -3.37  -9.50  -3.48  MAC_acc 0.901 0.925 0.998  minCOMAC 0.754  step MAC min 1.000  | real change (strain gauges): dkappa%  58.1  31.1  37.3
+lam  8.50 jacked (tangent)   OMA: df% -50.62 -32.95  -8.42 -41.37 -27.87  MAC_acc 0.991 0.992 0.649  minCOMAC 0.613  step MAC min 0.983  | real change (strain gauges): dkappa%  30.8  55.9 198.9
 lam  8.50 after unload       OMA: df%  -1.87  -1.15  -0.27  -1.21  -0.61  MAC_acc 0.993 0.995 1.000  minCOMAC 0.946  step MAC min 1.000  | real change (strain gauges): dkappa%  10.8   6.3   1.9
 lam  9.00 mass only          OMA: df% -36.52  -5.60 -19.86 -40.52  -6.00  MAC_acc 0.926 0.941 0.764  minCOMAC 0.637  step MAC min 0.999  | real change (strain gauges): dkappa%  43.7  26.7  75.1
-lam  9.00 under load         OMA: df% -49.26 -15.02 -23.73 -47.01 -13.72  MAC_acc 0.887 0.936 0.760  minCOMAC 0.606  step MAC min 0.996  | real change (strain gauges): dkappa%  67.8  39.0 106.7
-lam  9.00 jacked             OMA: df% -19.80 -10.49  -3.54 -10.53  -4.17  MAC_acc 0.909 0.931 0.998  minCOMAC 0.760  step MAC min 1.000  | real change (strain gauges): dkappa%  57.8  31.1  39.8
-lam  9.00 jacked (tangent)   OMA: df% -51.33 -33.66  -8.68 -41.89 -30.98  MAC_acc 0.995 0.995 0.539  minCOMAC 0.636  step MAC min 0.976  | real change (strain gauges): dkappa%  23.7  39.8 205.3
+lam  9.00 under load         OMA: df% -49.30 -15.09 -23.78 -47.11 -14.03  MAC_acc 0.887 0.936 0.760  minCOMAC 0.606  step MAC min 0.996  | real change (strain gauges): dkappa%  67.5  39.0 106.9
+lam  9.00 jacked             OMA: df% -19.87 -10.56  -3.62 -10.91  -4.39  MAC_acc 0.908 0.930 0.998  minCOMAC 0.749  step MAC min 1.000  | real change (strain gauges): dkappa%  57.6  31.1  39.2
+lam  9.00 jacked (tangent)   OMA: df% -51.35 -33.70  -8.75 -41.95 -31.07  MAC_acc 0.995 0.995 0.529  minCOMAC 0.627  step MAC min 0.975  | real change (strain gauges): dkappa%  23.6  39.8 205.1
 lam  9.00 after unload       OMA: df%  -2.10  -1.28  -0.30  -1.39  -0.68  MAC_acc 0.992 0.994 1.000  minCOMAC 0.938  step MAC min 1.000  | real change (strain gauges): dkappa%  11.8   6.9   2.1
 lam  9.50 mass only          OMA: df% -37.60  -5.86 -20.25 -41.63  -6.49  MAC_acc 0.924 0.941 0.757  minCOMAC 0.627  step MAC min 1.000  | real change (strain gauges): dkappa%  44.2  26.7  77.1
-lam  9.50 under load         OMA: df% -51.14 -16.69 -24.54 -48.74 -15.25  MAC_acc 0.891 0.936 0.745  minCOMAC 0.591  step MAC min 0.992  | real change (strain gauges): dkappa%  68.0  39.0 117.4
-lam  9.50 jacked             OMA: df% -21.55 -12.02  -3.77 -11.93  -5.12  MAC_acc 0.916 0.937 0.998  minCOMAC 0.756  step MAC min 1.000  | real change (strain gauges): dkappa%  57.0  30.9  41.5
-lam  9.50 jacked (tangent)   OMA: df% -51.86 -34.38 -10.92 -42.50 -33.05  MAC_acc 0.996 0.996 0.207  minCOMAC 0.534  step MAC min 0.878  | real change (strain gauges): dkappa%  19.6  32.8 166.6
+lam  9.50 under load         OMA: df% -51.18 -16.77 -24.60 -48.84 -15.55  MAC_acc 0.891 0.936 0.745  minCOMAC 0.591  step MAC min 0.992  | real change (strain gauges): dkappa%  67.7  39.0 117.7
+lam  9.50 jacked             OMA: df% -21.62 -12.10  -3.85 -12.30  -5.35  MAC_acc 0.915 0.936 0.998  minCOMAC 0.746  step MAC min 1.000  | real change (strain gauges): dkappa%  56.8  30.9  40.9
+lam  9.50 jacked (tangent)   OMA: df% -51.88 -34.42 -11.02 -42.55 -33.13  MAC_acc 0.995 0.996 0.201  minCOMAC 0.540  step MAC min 0.879  | real change (strain gauges): dkappa%  19.5  32.8 165.0
 lam  9.50 after unload       OMA: df%  -2.42  -1.51  -0.35  -1.76  -0.84  MAC_acc 0.990 0.993 1.000  minCOMAC 0.911  step MAC min 0.995  | real change (strain gauges): dkappa%  12.7   7.8   1.9
 lam 10.00 mass only          OMA: df% -38.63  -6.11 -20.63 -42.69  -6.98  MAC_acc 0.923 0.941 0.751  minCOMAC 0.619  step MAC min 1.000  | real change (strain gauges): dkappa%  44.6  26.6  79.2
-lam 10.00 under load         OMA: df% -52.89 -18.31 -25.40 -50.33 -16.79  MAC_acc 0.895 0.937 0.724  minCOMAC 0.574  step MAC min 0.984  | real change (strain gauges): dkappa%  68.1  38.9 131.8
-lam 10.00 jacked             OMA: df% -23.21 -13.49  -3.99 -13.35  -6.16  MAC_acc 0.923 0.943 0.998  minCOMAC 0.754  step MAC min 1.000  | real change (strain gauges): dkappa%  55.8  32.8  43.2
-lam 10.00 jacked (tangent)   OMA: df% -52.15 -34.53 -11.24 -42.71 -34.31  MAC_acc 0.996 0.996 0.156  minCOMAC 0.590  step MAC min 0.991  | real change (strain gauges): dkappa%  17.2  29.4 156.1
+lam 10.00 under load         OMA: df% -52.93 -18.38 -25.47 -50.42 -17.09  MAC_acc 0.895 0.937 0.723  minCOMAC 0.575  step MAC min 0.983  | real change (strain gauges): dkappa%  67.8  38.9 132.2
+lam 10.00 jacked             OMA: df% -23.28 -13.57  -4.07 -13.72  -6.40  MAC_acc 0.922 0.942 0.998  minCOMAC 0.744  step MAC min 1.000  | real change (strain gauges): dkappa%  55.6  32.7  42.6
+lam 10.00 jacked (tangent)   OMA: df% -52.17 -34.58 -11.35 -42.76 -34.40  MAC_acc 0.996 0.996 0.150  minCOMAC 0.585  step MAC min 0.991  | real change (strain gauges): dkappa%  17.1  29.3 154.4
 lam 10.00 after unload       OMA: df%  -2.68  -1.68  -0.38  -1.96  -0.94  MAC_acc 0.989 0.992 1.000  minCOMAC 0.904  step MAC min 1.000  | real change (strain gauges): dkappa%  13.4   8.2   2.1
 lam 10.50 mass only          OMA: df% -39.61  -6.37 -20.99 -43.68  -7.49  MAC_acc 0.922 0.941 0.745  minCOMAC 0.610  step MAC min 0.999  | real change (strain gauges): dkappa%  45.0  26.6  81.3
-lam 10.50 under load         OMA: df% -54.50 -19.83 -26.37 -51.71 -18.28  MAC_acc 0.899 0.937 0.685  minCOMAC 0.554  step MAC min 0.968  | real change (strain gauges): dkappa%  68.0  38.8 150.4
-lam 10.50 jacked             OMA: df% -24.76 -14.87  -4.19 -14.70  -7.22  MAC_acc 0.929 0.948 0.998  minCOMAC 0.755  step MAC min 1.000  | real change (strain gauges): dkappa%  54.5  34.5  44.8
-lam 10.50 jacked (tangent)   OMA: df% -52.25 -34.62 -11.53 -42.86 -34.66  MAC_acc 0.997 0.996 0.116  minCOMAC 0.567  step MAC min 0.996  | real change (strain gauges): dkappa%  16.8  28.5 151.6
+lam 10.50 under load         OMA: df% -54.54 -19.90 -26.44 -51.80 -18.57  MAC_acc 0.899 0.937 0.683  minCOMAC 0.554  step MAC min 0.967  | real change (strain gauges): dkappa%  67.7  38.8 151.0
+lam 10.50 jacked             OMA: df% -24.84 -14.94  -4.27 -15.08  -7.46  MAC_acc 0.929 0.948 0.998  minCOMAC 0.745  step MAC min 1.000  | real change (strain gauges): dkappa%  54.3  34.3  44.2
+lam 10.50 jacked (tangent)   OMA: df% -52.27 -34.67 -11.64 -42.90 -34.75  MAC_acc 0.997 0.996 0.111  minCOMAC 0.563  step MAC min 0.996  | real change (strain gauges): dkappa%  16.7  28.5 149.9
 lam 10.50 after unload       OMA: df%  -2.95  -1.86  -0.42  -2.18  -1.04  MAC_acc 0.988 0.991 1.000  minCOMAC 0.898  step MAC min 1.000  | real change (strain gauges): dkappa%  14.1   8.6   2.3
 lam 11.00 mass only          OMA: df% -40.55  -6.62 -21.34 -44.62  -8.01  MAC_acc 0.921 0.941 0.738  minCOMAC 0.602  step MAC min 0.999  | real change (strain gauges): dkappa%  45.4  26.9  83.5
-lam 11.00 under load         OMA: df% -56.00 -21.26 -27.56 -52.85 -19.73  MAC_acc 0.903 0.937 0.612  minCOMAC 0.551  step MAC min 0.951  | real change (strain gauges): dkappa%  67.8  38.6 169.5
-lam 11.00 jacked             OMA: df% -26.23 -16.14  -4.37 -16.00  -8.30  MAC_acc 0.936 0.953 0.997  minCOMAC 0.757  step MAC min 1.000  | real change (strain gauges): dkappa%  53.1  35.8  46.2
-lam 11.00 jacked (tangent)   OMA: df% -52.58 -35.02 -12.32 -43.23 -36.10  MAC_acc 0.998 0.997 0.064  minCOMAC 0.511  step MAC min 0.977  | real change (strain gauges): dkappa%  14.9  28.8 128.7
+lam 11.00 under load         OMA: df% -56.04 -21.33 -27.64 -52.93 -20.02  MAC_acc 0.903 0.937 0.608  minCOMAC 0.555  step MAC min 0.950  | real change (strain gauges): dkappa%  67.5  38.6 169.8
+lam 11.00 jacked             OMA: df% -26.30 -16.22  -4.46 -16.37  -8.54  MAC_acc 0.935 0.953 0.998  minCOMAC 0.747  step MAC min 1.000  | real change (strain gauges): dkappa%  52.9  35.7  45.5
+lam 11.00 jacked (tangent)   OMA: df% -52.61 -35.07 -12.44 -43.27 -36.20  MAC_acc 0.998 0.997 0.062  minCOMAC 0.509  step MAC min 0.977  | real change (strain gauges): dkappa%  14.8  28.8 127.2
 lam 11.00 after unload       OMA: df%  -3.23  -2.05  -0.46  -2.41  -1.17  MAC_acc 0.987 0.991 1.000  minCOMAC 0.895  step MAC min 1.000  | real change (strain gauges): dkappa%  14.8   9.0   2.5
 lam 11.50 mass only          OMA: df% -41.44  -6.88 -21.68 -45.52  -8.53  MAC_acc 0.920 0.941 0.732  minCOMAC 0.595  step MAC min 0.999  | real change (strain gauges): dkappa%  45.7  27.3  85.9
-lam 11.50 under load         OMA: df% -57.40 -22.61 -29.04 -53.70 -21.14  MAC_acc 0.907 0.938 0.497  minCOMAC 0.576  step MAC min 0.960  | real change (strain gauges): dkappa%  67.5  38.5 176.5
-lam 11.50 jacked             OMA: df% -27.60 -17.35  -4.55 -17.24  -9.43  MAC_acc 0.942 0.958 0.997  minCOMAC 0.763  step MAC min 1.000  | real change (strain gauges): dkappa%  51.6  36.6  47.6
-lam 11.50 jacked (tangent)   OMA: df% -52.79 -35.15 -13.01 -43.32 -36.95  MAC_acc 0.998 0.997 0.042  minCOMAC 0.494  step MAC min 0.995  | real change (strain gauges): dkappa%  13.8  30.1 118.6
+lam 11.50 under load         OMA: df% -57.44 -22.69 -29.14 -53.76 -21.42  MAC_acc 0.907 0.938 0.490  minCOMAC 0.572  step MAC min 0.961  | real change (strain gauges): dkappa%  67.2  38.5 175.8
+lam 11.50 jacked             OMA: df% -27.68 -17.43  -4.64 -17.61  -9.67  MAC_acc 0.942 0.958 0.997  minCOMAC 0.754  step MAC min 1.000  | real change (strain gauges): dkappa%  51.4  36.5  46.9
+lam 11.50 jacked (tangent)   OMA: df% -52.82 -35.20 -13.12 -43.36 -37.05  MAC_acc 0.998 0.997 0.041  minCOMAC 0.492  step MAC min 0.995  | real change (strain gauges): dkappa%  13.7  30.0 117.4
 lam 11.50 after unload       OMA: df%  -3.52  -2.23  -0.50  -2.65  -1.29  MAC_acc 0.986 0.990 1.000  minCOMAC 0.889  step MAC min 1.000  | real change (strain gauges): dkappa%  15.5   9.4   2.7
 lam 12.00 mass only          OMA: df% -42.30  -7.13 -22.01 -46.36  -9.06  MAC_acc 0.919 0.941 0.726  minCOMAC 0.588  step MAC min 0.999  | real change (strain gauges): dkappa%  46.1  27.6  88.6
-lam 12.00 under load         OMA: df% -58.70 -23.88 -30.73 -54.31 -22.49  MAC_acc 0.911 0.938 0.372  minCOMAC 0.493  step MAC min 0.970  | real change (strain gauges): dkappa%  67.1  38.3 167.4
-lam 12.00 jacked             OMA: df% -28.89 -18.46  -4.71 -18.42 -10.54  MAC_acc 0.948 0.963 0.997  minCOMAC 0.771  step MAC min 1.000  | real change (strain gauges): dkappa%  50.1  37.1  48.8
-lam 12.00 jacked (tangent)   OMA: df% -52.82 -35.15 -13.25 -43.32 -36.95  MAC_acc 0.998 0.997 0.045  minCOMAC 0.493  step MAC min 1.000  | real change (strain gauges): dkappa%  13.6  30.2 119.4
+lam 12.00 under load         OMA: df% -58.74 -23.96 -30.85 -54.36 -22.77  MAC_acc 0.911 0.938 0.365  minCOMAC 0.492  step MAC min 0.971  | real change (strain gauges): dkappa%  66.8  38.3 166.0
+lam 12.00 jacked             OMA: df% -28.97 -18.55  -4.80 -18.79 -10.79  MAC_acc 0.948 0.962 0.997  minCOMAC 0.761  step MAC min 1.000  | real change (strain gauges): dkappa%  49.9  37.0  48.1
+lam 12.00 jacked (tangent)   OMA: df% -52.85 -35.20 -13.37 -43.36 -37.05  MAC_acc 0.998 0.997 0.043  minCOMAC 0.491  step MAC min 1.000  | real change (strain gauges): dkappa%  13.6  30.1 118.2
 lam 12.00 after unload       OMA: df%  -3.79  -2.41  -0.54  -2.88  -1.39  MAC_acc 0.984 0.989 1.000  minCOMAC 0.882  step MAC min 1.000  | real change (strain gauges): dkappa%  16.3   9.9   2.9
 Process 0 Terminating
