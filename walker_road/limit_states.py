@@ -636,11 +636,11 @@ def main():
             if case == "under load":
                 row["df_stiffness_pct"] = (100 * (ft - f_m) / f_m).tolist()
             rows.append(row)
-            print(f"lam {lam:5.2f} {case:18s} df% " + " ".join(f"{d:+6.2f}" for d in df[:5]) +
+            print(f"lam {lam:5.2f} {case:18s} OMA: df% " + " ".join(f"{d:+6.2f}" for d in df[:5]) +
                   "  MAC_acc " + " ".join(f"{x:.3f}" for x in sm["mac_acc"][:3]) +
-                  "  MAC_sg " + " ".join(f"{x:.3f}" for x in sm["mac_sg"][:3]) +
-                  "  dkappa% " + " ".join(f"{x:5.1f}" for x in sm["dkappa_max_pct"][:3]) +
-                  "  minCOMAC %.3f" % min(sm["comac_acc"]))
+                  "  minCOMAC %.3f" % min(sm["comac_acc"]) +
+                  "  | real change (strain gauges): dkappa% " +
+                  " ".join(f"{x:5.1f}" for x in sm["dkappa_max_pct"][:3]))
     mac_stab = {n: float(ms.MAC_STAB[ms.MODES.index(n)]) for n in names if n in ms.MODES}
     out["stage2"] = dict(names=names, families=[list(f) for f in fams], f_ref=f_ref.tolist(), rows=rows,
                          mac_stab_measured=mac_stab, accelerometers=sensors()["acc"].sensor.tolist(),
@@ -679,27 +679,70 @@ def plot(out):
     fig.tight_layout()
     fig.savefig("results/limit_states.png", dpi=150)
 
-    # mode-shape detectability: 1 - MAC at accelerometers and at strain gauges
+    # --- accelerometer OMA only: mode-shape change vs the measured MAC stability -------------
     fig, axs = plt.subplots(1, 3, figsize=(11, 3.6), sharey=True)
     for k, ax in enumerate(axs):
         n = st["names"][k]
         for c, col in (("jacked", "C0"), ("after unload", "C3")):
             rr = [r for r in st["rows"] if r["case"] == c and r["mac"][k] >= MAC_TRACK]
-            lam = [r["lam"] for r in rr]
-            ax.semilogy(lam, [max(1 - r["mac_acc"][k], 1e-6) for r in rr], "-o", ms=3, color=col,
-                        label=f"{c}: accelerometers")
-            ax.semilogy(lam, [max(1 - r["mac_sg"][k], 1e-6) for r in rr], "--s", ms=3, color=col,
-                        label=f"{c}: strain gauges")
+            ax.semilogy([r["lam"] for r in rr], [max(1 - r["mac_acc"][k], 1e-6) for r in rr], "-o", ms=3,
+                        color=col, label=f"{c}: 1 - MAC")
+            ax.semilogy([r["lam"] for r in rr], [max(1 - min(r["comac_acc"]), 1e-6) for r in rr], ":", color=col,
+                        label=f"{c}: 1 - min COMAC (5 modes)")
         if n in st["mac_stab_measured"]:
-            ax.axhline(1 - st["mac_stab_measured"][n], color="k", lw=0.8, ls=":", label="measured 1 - MAC stability")
+            ax.axhline(1 - st["mac_stab_measured"][n], color="k", lw=0.8, ls="--", label="measured MAC scatter")
         ax.axvline(min(out["stage1"]["lam_crack"]), color="k", lw=0.6)
-        ax.set_title(f"{n}")
+        ax.set_title(f"{n} - 9 accelerometers")
         ax.set_xlabel("λ (CL-625 trucks per lane)")
         ax.grid(alpha=0.3, which="both")
-    axs[0].set_ylabel("1 - MAC")
+    axs[0].set_ylabel("mode-shape change")
     axs[0].legend(fontsize=6)
     fig.tight_layout()
     fig.savefig("results/limit_states_shapes.png", dpi=150)
+
+    # --- does the structure change, and can accelerometer OMA see it? ----------------------
+    # grid: rows = indicators, columns = load level; cell value printed, colour = detectable
+    from matplotlib.colors import ListedColormap
+    STRAIN_MIN = 1.0                                    # % bending change counted as "real change"
+    fig, axs = plt.subplots(2, 1, figsize=(12, 6.2))
+    for ax, c in zip(axs, ("jacked", "after unload")):
+        rr = [r for r in st["rows"] if r["case"] == c]
+        lam = [r["lam"] for r in rr]
+        labels, vals, flags = [], [], []
+        labels.append("REAL CHANGE: girder bending\nat strain gauges (%)")
+        v = [max(r["dkappa_max_pct"][:3]) for r in rr]
+        vals.append(v)
+        flags.append([2 if x >= STRAIN_MIN else 0 for x in v])
+        for k in range(3):
+            n = st["names"][k]
+            labels.append(f"OMA frequency {n}\n|Δf| (%), limit {DETECT_PCT}%")
+            v = [abs(r["df_pct"][k]) for r in rr]
+            vals.append(v)
+            flags.append([1 if x >= DETECT_PCT else 0 for x in v])
+        for k in range(3):
+            n = st["names"][k]
+            thr = 1 - st["mac_stab_measured"].get(n, 0.999)
+            labels.append(f"OMA mode shape {n}\n1-MAC (x1000), limit {1000 * thr:.0f}")
+            v = [1000 * (1 - r["mac_acc"][k]) for r in rr]
+            vals.append(v)
+            flags.append([1 if x >= 1000 * thr else 0 for x in v])
+        ax.imshow(np.array(flags), cmap=ListedColormap(["0.9", "#7fc97f", "#fdc086"]), vmin=0, vmax=2, aspect="auto")
+        for i, row in enumerate(vals):
+            for j, x in enumerate(row):
+                ax.text(j, i, f"{abs(x):.1f}", ha="center", va="center", fontsize=6.5)
+        ax.set_yticks(range(len(labels)), labels, fontsize=7)
+        ax.set_xticks(range(len(lam)), [f"{x:g}" for x in lam], fontsize=7)
+        ax.axhline(0.5, color="k", lw=1.2)
+        j_cr = int(np.searchsorted(lam, min(out["stage1"]["lam_crack"])))
+        ax.axvline(j_cr - 0.5, color="k", lw=0.8, ls="--")
+        ax.set_title({"jacked": "Load ON (cracks open; load mass removed)",
+                      "after unload": "AFTER UNLOADING (cracks closed by prestress = permanent damage)"}[c],
+                     fontsize=9, loc="left")
+    axs[1].set_xlabel("λ = CL-625 trucks per lane (dashed line: first girder cracking)")
+    fig.text(0.01, 0.005, "orange = the structure has really changed (bending at the gauges > 1 %);  "
+             "green = accelerometer OMA can detect it;  grey = OMA cannot detect it", fontsize=8)
+    fig.tight_layout(rect=(0, 0.03, 1, 1))
+    fig.savefig("results/limit_states_strain_vs_oma.png", dpi=150)
 
 
 if __name__ == "__main__":
