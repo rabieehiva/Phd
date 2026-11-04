@@ -243,7 +243,58 @@ def step3c_text(rr):
     return L
 
 
-def summary(d, bc, rr=None):
+def step4(lr):
+    rows = lr["rows"]
+    lam = [r["lam"] for r in rows]
+    fig, ax = plt.subplots(1, 3, figsize=(15, 4))
+    for k, col in zip(range(3), ("C0", "C1", "C2")):
+        n = lr["names"][k]
+        ax[0].plot(lam, [r["df_loaded"][k] for r in rows], ":", color=col, label=f"{n} measured with load on")
+        ax[0].plot(lam, [r["df_target"][k] for r in rows], "-", color=col, lw=2.5, alpha=0.4,
+                   label=f"{n} true (no load mass)")
+        ax[0].plot(lam, [r["df_F2"][k] for r in rows], "--", color=col, label=f"{n} corrected (model ratio)")
+        ax[1].plot(lam, [abs(r["err_F1"][k]) for r in rows], "-", color=col, label=f"{n} Rayleigh (mass-normalised shapes)")
+        ax[1].plot(lam, [abs(r["err_F2"][k]) for r in rows], "--", color=col, label=f"{n} model ratio")
+        ax[2].semilogy(lam, [max(1 - r["mac_loaded"][k], 1e-6) for r in rows], ":", color=col, label=f"{n} no correction")
+        ax[2].semilogy(lam, [max(1 - r["mac_S1"][k], 1e-6) for r in rows], "-", color=col, label=f"{n} perturbation")
+        ax[2].semilogy(lam, [max(1 - r["mac_S2"][k], 1e-6) for r in rows], "--", color=col, label=f"{n} model subtraction")
+    ax[1].axhline(ls.DETECT_PCT, color="k", lw=0.8, ls=":")
+    ax[0].set_ylabel("frequency change (%)")
+    ax[0].set_title("Frequencies: measured with load, true, corrected", fontsize=9)
+    ax[1].set_ylabel("|error of corrected frequency| (%)")
+    ax[1].set_title(f"Frequency correction error (dotted: {ls.DETECT_PCT} % detection limit)", fontsize=9)
+    ax[2].set_ylabel("1 - MAC to the true shape (9 accelerometers)")
+    ax[2].set_title("Mode shapes: removing the mass effect", fontsize=9)
+    for a_ in ax:
+        ls_lines(a_, lr["limit_states"])
+        a_.set_xlabel("λ = CL-625 trucks per lane")
+        a_.grid(alpha=0.3, which="both")
+        a_.legend(fontsize=5.5)
+    fig.tight_layout()
+    fig.savefig(f"{OUT}/Q3_step4_load_removal.png", dpi=150)
+
+
+def step4_text(lr):
+    rows = lr["rows"]
+    L = ["## Step 4 – Removing the effect of the test load", "",
+         "OMA measured with the test load on the bridge sees the damage AND the added mass. Corrections use only "
+         "the known load (mass, position) and the calibrated undamaged model.", "",
+         "| Limit state | M1 true (no mass) | M1 measured with load | error after Rayleigh | error after model ratio "
+         "| MAC M1–M3 no correction | MAC perturbation | MAC model subtraction |", "|---|---|---|---|---|---|---|---|"]
+    for n, lam in lr["limit_states"].items():
+        r = min(rows, key=lambda r: abs(r["lam"] - lam))
+        L.append(f"| {n} | {r['df_target'][0]:+.2f} % | {r['df_loaded'][0]:+.1f} % | {r['err_F1'][0]:+.2f} % | "
+                 f"{r['err_F2'][0]:+.2f} % | {min(r['mac_loaded'][:3]):.3f} | {min(r['mac_S1'][:3]):.3f} | "
+                 f"{min(r['mac_S2'][:3]):.3f} |")
+    L += ["", "**Answer:** the test-load mass hides the damage (M1 about −12 % per truck pair, against −0.05 % "
+          "from cracking at ULS). Dividing out the mass effect predicted by the calibrated model recovers the true "
+          "frequencies within 0.5 % and the true mode shapes (MAC ≥ 0.98) up to beyond ULS. The simpler Rayleigh "
+          "correction with mass-normalised shapes works for light loads (error < 0.5 % up to about one truck "
+          "per lane) but grows to 1–2.5 % for heavy loads, because the heavy mass also changes the shapes.", ""]
+    return L
+
+
+def summary(d, bc, rr=None, lr=None):
     s1, st = d["stage1"], d["stage2"]
     it = s1["iteration"]
     lsd = s1["limit_states"]
@@ -310,11 +361,9 @@ def summary(d, bc, rr=None):
           "Pad vertical stiffness is hard to identify, and cracking beyond ULS partly ends up in the pad "
           "stiffness. Support and girder stiffness are therefore not cleanly separable with 9 accelerometers.", "",
           ] + (step3b_text(rr) if rr else []) + (step3c_text(rr) if rr and "range" in rr else []) + [
-          "## Step 4 – Removing the load effect (next)", "",
-          "Not done yet. For reference, the test-load mass alone lowers M1 by about "
-          f"{-row('mass only', 1.0)['df_pct'][0]:.0f} % per truck pair (λ = 1), far more than the cracking at ULS.",
-          "", "Figures: `Q3_step1_physical_changes.png`, `Q3_step2_oma_response.png`, "
-          "`Q3_step3_boundary_conditions.png`, `Q3_step3b_rotation_rule.png`, `Q3_step3c_rule_range.png`."]
+          ] + (step4_text(lr) if lr else []) + [
+          "Figures: `Q3_step1_physical_changes.png`, `Q3_step2_oma_response.png`, "
+          "`Q3_step3_boundary_conditions.png`, `Q3_step3b_rotation_rule.png`, `Q3_step3c_rule_range.png`, `Q3_step4_load_removal.png`."]
     open(f"{OUT}/Q3_summary.md", "w").write("\n".join(L) + "\n")
 
 
@@ -346,6 +395,8 @@ def main():
         ls.main()
         bc_identification.main()
         q3_rotation_rule.main()
+        import q3_load_removal
+        q3_load_removal.main()
     d = json.load(open("results/limit_states.json"))
     bc = json.load(open("results/bc_identification.json"))
     step1(d)
@@ -357,7 +408,11 @@ def main():
         step3b(rr)
         if "range" in rr:
             step3c(rr)
-    summary(d, bc, rr)
+    lr_path = f"{OUT}/q3_load_removal.json"
+    lr = json.load(open(lr_path)) if os.path.exists(lr_path) else None
+    if lr:
+        step4(lr)
+    summary(d, bc, rr, lr)
     print(open(f"{OUT}/Q3_summary.md").read())
 
 

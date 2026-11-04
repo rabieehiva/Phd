@@ -1,0 +1,339 @@
+<title>Walker Road Q3 Report</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Serif:wght@500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: single reading column (~70ch) with full-width figures; numbered sections follow the supervisor's chain of questions */
+:root {
+  --bg: #f7f8f9; --paper: #ffffff; --fg: #1d2329; --muted: #5a6670; --rule: #d9dee3;
+  --accent: #1f5f8b; --accent-soft: #e6eff6; --good: #2f7d4f; --good-soft: #e5f2ea; --warn: #9a6400; --warn-soft: #fbf1df;
+  --serif: "IBM Plex Serif", Georgia, "Times New Roman", serif;
+  --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #12161a; --paper: #1a1f24; --fg: #e3e8ec; --muted: #9aa6b0; --rule: #2e363e;
+  --accent: #7fb6dd; --accent-soft: #1d2d3a; --good: #7cc89a; --good-soft: #17291f; --warn: #e3b25a; --warn-soft: #2e2512; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #12161a; --paper: #1a1f24; --fg: #e3e8ec; --muted: #9aa6b0; --rule: #2e363e;
+  --accent: #7fb6dd; --accent-soft: #1d2d3a; --good: #7cc89a; --good-soft: #17291f; --warn: #e3b25a; --warn-soft: #2e2512; color-scheme: dark }
+body { background: var(--bg); color: var(--fg); font: 16px/1.6 var(--sans); }
+.page { max-width: 980px; margin: 0 auto; padding-block: 40px 80px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.text { max-width: 70ch; }
+h1, h2, h3 { font-family: var(--serif); text-wrap: balance; line-height: 1.25; margin: 0; }
+h1 { font-size: 2.1rem; font-weight: 600; }
+h2 { font-size: 1.5rem; font-weight: 600; margin-top: 3.2rem; padding-top: 1.2rem; border-top: 1px solid var(--rule); }
+h3 { font-size: 1.12rem; font-weight: 600; margin-top: 1.8rem; }
+p, li { margin: 0.6rem 0; }
+ul, ol { padding-left: 1.3rem; }
+.eyebrow { font: 500 0.75rem/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.6rem; }
+.sub { color: var(--muted); margin-top: 0.6rem; }
+.lead { font-size: 1.08rem; }
+.box { background: var(--paper); border: 1px solid var(--rule); border-radius: 6px; padding: 1rem 1.2rem; margin: 1.2rem 0; }
+.answer { background: var(--good-soft); border-left: 4px solid var(--good); border-radius: 0 6px 6px 0; padding: 0.8rem 1.1rem; margin: 1.2rem 0; max-width: 70ch; }
+.answer b:first-child { color: var(--good); }
+.note { background: var(--warn-soft); border-left: 4px solid var(--warn); border-radius: 0 6px 6px 0; padding: 0.8rem 1.1rem; margin: 1.2rem 0; max-width: 70ch; }
+.chain { display: grid; gap: 0.5rem; counter-reset: q; padding: 0; list-style: none; }
+.chain li { background: var(--paper); border: 1px solid var(--rule); border-radius: 6px; padding: 0.7rem 1rem; margin: 0; display: grid; grid-template-columns: 2.2rem 1fr; gap: 0.6rem; }
+.chain li span.n { font: 600 1rem var(--mono); color: var(--accent); }
+.chain li div { min-width: 0; }
+.chain .ans { color: var(--muted); font-size: 0.95rem; }
+figure { margin: 1.4rem 0; background: var(--paper); border: 1px solid var(--rule); border-radius: 6px; padding: 0.8rem; }
+figure img { display: block; width: 100%; height: auto; background: #fff; border-radius: 3px; }
+figcaption { color: var(--muted); font-size: 0.9rem; margin-top: 0.6rem; max-width: 80ch; }
+.tbl { overflow-x: auto; margin: 1rem 0; }
+table { border-collapse: collapse; font-size: 0.9rem; font-variant-numeric: tabular-nums; min-width: 100%; background: var(--paper); }
+th, td { border: 1px solid var(--rule); padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+th { background: var(--accent-soft); font-weight: 600; }
+td.num, th.num { text-align: right; white-space: nowrap; }
+code, .mono { font-family: var(--mono); font-size: 0.88em; }
+.toc { columns: 2 260px; gap: 2rem; padding-left: 1.2rem; }
+.toc a, a { color: var(--accent); }
+.kv { display: grid; grid-template-columns: max-content 1fr; gap: 0.3rem 1rem; }
+.kv dt { color: var(--muted); }
+.kv dd { margin: 0; min-width: 0; }
+.good { color: var(--good); font-weight: 600; }
+.warn { color: var(--warn); font-weight: 600; }
+@media (max-width: 560px) { h1 { font-size: 1.6rem; } .kv { grid-template-columns: 1fr; } .kv dt { margin-top: 0.5rem; } }
+</style>
+
+<div class="page">
+<header class="text">
+  <div class="eyebrow">PhD research · Question 3 · Walker Road overpass (L930, west structure)</div>
+  <h1>Can OMA at service level tell us anything about the bridge at ULS?</h1>
+  <p class="sub">Grillage study of the Lower Walker Road Rte. 2 overpass with the as-built drawings (contract 93-4013) and CSA S6-19. All results come from <code>walker_road/q3_run.py</code>; numbers and figures are reproducible.</p>
+</header>
+
+<section class="text">
+<h2 id="summary">Summary</h2>
+<p class="lead">Load rating is done at the ultimate limit state (ULS), but operational modal analysis (OMA) is measured under everyday traffic. This report follows the chain of questions from the supervision meetings and answers each one with a physical reason, not an assumed factor.</p>
+<ol class="chain">
+  <li><span class="n">1</span><div><b>Does the bridge physically change at ULS?</b><div class="ans">Only a little. The girders start to crack right at ULS (first crack at 1.87 trucks per lane, ULS = 1.91). The bearings do not lift off, slip or lock, so the supports stay as they are.</div></div></li>
+  <li><span class="n">2</span><div><b>Do frequencies and mode shapes show it?</b><div class="ans">Not at ULS: the girder cracking is too small. Only M3 moves (−2 %), from deck cracking that has probably already happened under traffic. Beyond ULS M1 drops about 5 % with the load on; after unloading the prestress closes the cracks and the change mostly disappears.</div></div></li>
+  <li><span class="n">3</span><div><b>Can OMA tell what the supports are doing?</b><div class="ans">It sees support changes clearly (much more than cracking), but a model calibration mixes up "stiffer supports" with "softer girders". The bilinear rotational-stiffness rule only matters if the girder ends are partly fixed.</div></div></li>
+  <li><span class="n">4</span><div><b>Can the effect of the test load be removed?</b><div class="ans">Yes. The load's mass hides everything (M1 −12 % per truck pair), but dividing out the mass effect predicted by the calibrated model recovers the true frequencies within 0.5 % and the true mode shapes.</div></div></li>
+</ol>
+</section>
+
+<section class="text">
+<h3>Contents</h3>
+<ul class="toc">
+  <li><a href="#bridge">The bridge and the model</a></li>
+  <li><a href="#loading">How the bridge is loaded</a></li>
+  <li><a href="#step1">Step 1 – What physically changes</a></li>
+  <li><a href="#step2">Step 2 – What OMA sees</a></li>
+  <li><a href="#step3">Step 3 – Supports and calibration</a></li>
+  <li><a href="#step3b">Step 3b/3c – Support stiffness rules</a></li>
+  <li><a href="#step4">Step 4 – Removing the load effect</a></li>
+  <li><a href="#conclusions">Conclusions</a></li>
+  <li><a href="#assumptions">Assumptions and limitations</a></li>
+  <li><a href="#glossary">Glossary</a></li>
+  <li><a href="#files">Files and how to rerun</a></li>
+</ul>
+</section>
+
+<section>
+<div class="text">
+<h2 id="bridge">The bridge and the model</h2>
+<dl class="kv box">
+  <dt>Span and skew</dt><dd>33.0 m simple span (c/c bearings), skew 29°36′22″</dd>
+  <dt>Girders</dt><dd>7 NBDOT Type 1 precast prestressed girders, 1.5 m deep, spaced 1.9 m; 200 mm cast-in-place deck, 65 mm asphalt, concrete barrier walls</dd>
+  <dt>Prestress (Dwg 11/18)</dt><dd>50 × 12.7 mm low-relaxation strands per girder (40 straight, 10 harped, hold-downs 3 m either side of midspan), 138 kN each at jacking; f′c = 40 MPa (35 MPa at release)</dd>
+  <dt>Bearings (Dwg 5/18)</dt><dd>14 Goodco Series EL steel-laminated elastomeric pads, 600 × 250 × 80 mm, not attached to girder or seat (held by friction), no sliding plate</dd>
+  <dt>Joint (Dwg 18/18)</dt><dd>Strip-seal expansion joint, 38 mm opening at 7 °C</dd>
+  <dt>Model</dt><dd>OpenSees grillage: one member per girder line, transverse slab members orthogonal to the girders (skew &gt; 20°), skewed diaphragm lines, each pad as one linear spring set at its centre</dd>
+  <dt>Calibration</dt><dd>Frequency-calibrated to the OMA results (SSI-COV, 17,027 hourly blocks): M1, M2, M3, M5, M6 within 0.3 %</dd>
+  <dt>Sensors</dt><dd>9 accelerometers (surveyed positions on G1, G3, G4 and G7); used for all mode-shape results</dd>
+</dl>
+</div>
+</section>
+
+<section>
+<div class="text">
+<h2 id="loading">How the bridge is loaded</h2>
+<p>The load is the CSA S6-19 design truck <b>CL-625</b> (five axles: 50, 125, 125, 175 and 150 kN, total 625 kN). One truck stands in each of the two eastbound lanes, parked where it gives the largest moment at midspan. The load level is written as <b>λ</b> (lambda): it multiplies every axle load.</p>
+<ul>
+  <li>λ = 1 means one CL-625 in each lane: 1250 kN (about 127 t) on the bridge.</li>
+  <li>λ = 2 means every axle is twice as heavy, and so on. λ is a load scale, not a test procedure.</li>
+</ul>
+<p>The limit states follow from the S6-19 ULS combination: live-load factor 1.70 × dynamic load allowance 1.25 × two-lane modification factor 0.90 = <b>λ = 1.91</b>.</p>
+</div>
+<div class="tbl"><table>
+  <tr><th>Limit state</th><th class="num">λ (trucks per lane)</th><th>Meaning</th></tr>
+  <tr><td>SLS</td><td class="num">1.00</td><td>One unfactored CL-625 per lane</td></tr>
+  <tr><td>75 % ULS</td><td class="num">1.43</td><td>Level of the supervisor's load-test paper (70–80 % of ULS)</td></tr>
+  <tr><td>ULS</td><td class="num">1.91</td><td>1.70 × 1.25 × 0.90</td></tr>
+  <tr><td>Beyond ULS</td><td class="num">3.00</td><td>To show what happens once cracking spreads</td></tr>
+</table></div>
+<div class="text">
+<p>At each load level the model goes through the same loop (a sequential-linear analysis): static analysis → check which parts have cracked or changed → update their stiffness → repeat until nothing changes (this captures load sharing between girders) → modal analysis of that state. Each load level is therefore a separate linear model, valid for the small vibrations that OMA measures.</p>
+<p>Unless stated otherwise, steps 1–3 look at <b>stiffness changes only</b>: the mass of the test load is left out (as if the force came from jacks pulling against ground anchors). The mass is handled in step 4.</p>
+</div>
+</section>
+
+<section>
+<div class="text">
+<h2 id="step1">Step 1 – Does the bridge physically change at ULS?</h2>
+<h3>Girders: prestress and cracking (CSA S6-19)</h3>
+<ul>
+  <li><b>Prestress losses</b> (S6-19 8.7.4, girder age 31 years, RH 75 %): elastic shortening 140 MPa, creep 185 MPa, shrinkage 73 MPa, relaxation 48 MPa, total <b>446 MPa = 31.9 %</b> of the jacking stress. Effective prestress 4,700 kN per girder.</li>
+  <li><b>Bottom-fibre stress</b> under dead load and prestress: −3.9 MPa (compression) for interior girders.</li>
+  <li><b>Cracking</b> when the bottom stress reaches f<sub>r</sub> = 0.4√f′c = 2.53 MPa (S6-19 8.4.1.8.1). First decompression at λ = 1.13, <b>first crack at λ = 1.87</b> (interior girders G4/G5), i.e. right at ULS.</li>
+  <li><b>Cracked stiffness</b>: CSA effective moment of inertia I<sub>e</sub> = I<sub>cr</sub> + (I<sub>g</sub> − I<sub>cr</sub>)(M<sub>cr</sub>/M<sub>a</sub>)³, element by element, with I<sub>cr</sub> from a cracked transformed-section analysis (I<sub>cr</sub> ≈ 0.18–0.20 I<sub>g</sub>).</li>
+  <li><b>Flexural resistance</b> (S6-19 8.8.4) is reached at about λ = 8, far beyond ULS.</li>
+  <li><b>Deck</b>: local transverse cracking under the wheels from S6-19 5.7.1.2 starts at λ = 0.70, so the deck is most likely already cracked from everyday trucks.</li>
+</ul>
+<h3>Bearings: uplift, slip and locking (checked, not assumed)</h3>
+<p>The pads are modelled as linear springs, as in practice. Three things that could change the supports are checked at every load level:</p>
+<ul>
+  <li><b>Uplift / span change</b>: the back edge of a pad would lift if the girder-end rotation × half the pad length exceeded the pad's compression. The dead load compresses each pad about 1.3 mm, which always wins: <span class="good">no uplift</span>.</li>
+  <li><b>Slip</b>: an unattached pad slides if the horizontal force exceeds friction μR (μ = 0.20, Goodco, rubber on concrete). Largest ratio 0.03 at λ = 3 and 0.11 at capacity: <span class="good">no slip</span>.</li>
+  <li><b>Locking</b>: under load the top of each girder end moves towards the span, so the 38 mm joint <i>opens</i> (by 0.9 mm at ULS). The girder soffit moves towards the ballast wall by 1.3 mm against about 225 mm of clearance: <span class="good">no locking</span>.</li>
+</ul>
+</div>
+<div class="tbl"><table>
+  <tr><th>Limit state</th><th class="num">λ</th><th class="num">Cracked girder elements (of 210)</th><th class="num">Lowest I<sub>e</sub>/I<sub>g</sub></th><th class="num">Pad contact (1 = no uplift)</th><th class="num">H/(μR) (&lt; 1 = no slip)</th><th class="num">Soffit movement / clearance</th><th>Joint</th></tr>
+  <tr><td>SLS</td><td class="num">1.00</td><td class="num">0</td><td class="num">100 %</td><td class="num">1.00</td><td class="num">0.01</td><td class="num">0.7 / 225 mm</td><td>opens 0.5 mm</td></tr>
+  <tr><td>75 % ULS</td><td class="num">1.43</td><td class="num">0</td><td class="num">100 %</td><td class="num">1.00</td><td class="num">0.02</td><td class="num">1.0 / 225 mm</td><td>opens 0.7 mm</td></tr>
+  <tr><td>ULS</td><td class="num">1.91</td><td class="num">7</td><td class="num">98 %</td><td class="num">1.00</td><td class="num">0.02</td><td class="num">1.3 / 225 mm</td><td>opens 0.9 mm</td></tr>
+  <tr><td>Beyond ULS</td><td class="num">3.00</td><td class="num">76</td><td class="num">68 %</td><td class="num">1.00</td><td class="num">0.03</td><td class="num">2.2 / 225 mm</td><td>opens 1.5 mm</td></tr>
+</table></div>
+<figure>
+  <img src="img/step1.png" alt="Three panels against load level: cracked girder elements and lowest stiffness ratio; pad contact ratio and slip ratio; girder-end movements against joint gap and clearance">
+  <figcaption><b>Figure 1.</b> What physically changes with load. Left: cracking starts at λ = 1.87 and spreads; the lowest local stiffness falls to about 30 % near capacity. Middle: pads stay in full contact and far from slipping. Right: the girder-end movements stay one to two orders of magnitude below the joint gap and the clearance. Dashed lines mark SLS, 75 % ULS, ULS and beyond ULS.</figcaption>
+</figure>
+<div class="answer"><b>Answer to step 1.</b> Yes, but only the girders change: they just start to crack at ULS, and the stiffness loss spreads quickly above it. The bearings do not lift, slip or lock up to the flexural resistance, so the boundary conditions do not change with load at Walker Road.</div>
+</section>
+
+<section>
+<div class="text">
+<h2 id="step2">Step 2 – Do OMA frequencies and mode shapes show it?</h2>
+<p>For each limit state the frequencies of M1–M3 and their mode shapes at the 9 accelerometers are compared with the undamaged bridge. Two situations are shown:</p>
+<ul>
+  <li><b>Load on</b>: cracks are open (stiffness from the CSA I<sub>e</sub>).</li>
+  <li><b>After unloading</b>: the prestress closes the cracks; a small permanent stiffness loss remains, interpolated from 100 % at first cracking to 84 % at the resistance (full-scale girder tests by Zhou et al., 2019).</li>
+</ul>
+<p>Detection limits: a frequency change of 0.5 % (assumed scatter after temperature compensation) and, for mode shapes, the MAC scatter measured between hourly OMA blocks (M1 0.998, M2 0.997, M3 0.999).</p>
+</div>
+<div class="tbl"><table>
+  <tr><th>Limit state</th><th class="num">Δf M1, load on</th><th class="num">Δf M2, load on</th><th class="num">Δf M3, load on</th><th class="num">MAC M1</th><th class="num">MAC M2</th><th class="num">MAC M3</th><th class="num">Δf M1 after unloading</th></tr>
+  <tr><td>SLS</td><td class="num">−0.02 %</td><td class="num">−0.17 %</td><td class="num warn">−1.28 %</td><td class="num">1.000</td><td class="num">1.000</td><td class="num">1.000</td><td class="num">0.00 %</td></tr>
+  <tr><td>75 % ULS</td><td class="num">−0.02 %</td><td class="num">−0.25 %</td><td class="num warn">−1.83 %</td><td class="num">1.000</td><td class="num">1.000</td><td class="num">1.000</td><td class="num">0.00 %</td></tr>
+  <tr><td>ULS</td><td class="num">−0.05 %</td><td class="num">−0.28 %</td><td class="num warn">−2.02 %</td><td class="num">1.000</td><td class="num">1.000</td><td class="num">1.000</td><td class="num">0.00 %</td></tr>
+  <tr><td>Beyond ULS</td><td class="num warn">−5.50 %</td><td class="num warn">−3.00 %</td><td class="num warn">−2.97 %</td><td class="num warn">0.976</td><td class="num warn">0.984</td><td class="num">1.000</td><td class="num">−0.51 %</td></tr>
+</table></div>
+<figure>
+  <img src="img/step2.png" alt="Frequency change and 1 minus MAC of M1 to M3 against load level, with load on and after unloading">
+  <figcaption><b>Figure 2.</b> OMA response to the physical changes (stiffness only). Left: frequencies; the grey band is the ±0.5 % detection limit. Right: mode-shape change at the 9 accelerometers (1 − MAC, log scale); dotted lines are the measured MAC scatter of each mode.</figcaption>
+</figure>
+<div class="text"><p>The detection grid below puts the same results side by side with the "real" change in the girders (the bending at the strain-gauge positions), to show where the structure has changed but OMA cannot tell.</p></div>
+<figure>
+  <img src="img/detection_grid.png" alt="Grid of load levels against indicators; orange marks real change, green marks detectable by OMA, grey not detectable">
+  <figcaption><b>Figure 3.</b> Does the structure change (orange, top row) and can accelerometer OMA see it (green)? Top block: load on. Bottom block: after unloading. Between about λ = 2.5 and 3 after unloading, the girders have changed but OMA frequencies and shapes do not show it yet.</figcaption>
+</figure>
+<div class="answer"><b>Answer to step 2.</b> At SLS to ULS, only M3 changes detectably (1–2 %), and that is local deck cracking, which has most likely already happened under traffic. The onset of girder cracking at ULS is invisible to OMA. Beyond ULS, M1 drops about 5 % with the load on and the shapes change beyond the measured scatter. After unloading, the prestress closes the cracks and frequencies recover to within 0.5 % until about λ = 3. Frequencies are the better indicator; accelerometer mode shapes react later and less.</div>
+</section>
+
+<section>
+<div class="text">
+<h2 id="step3">Step 3 – Can OMA tell what the supports are doing?</h2>
+<p>In the supervisor's load-test paper the calibrated support fixities changed as the load went up (some joints went from half-fixed to almost fixed, others to almost pinned), and the calibrated E changed at the same time. Walker Road's supports do not change physically (step 1), but the question is still whether OMA <i>could</i> tell if they did.</p>
+<p><b>Method.</b> A "true" bridge is built at each limit state: the cracking from step 1 plus one support scenario. Its OMA data are simulated at the 9 accelerometers (6 modes, with noise). The model is then calibrated to those data the usual way, with five unknowns: girder modulus E<sub>g</sub>, rotational fixity at the north and south ends, and pad stiffness at the north and south ends. Fixity is expressed as a fixity factor γ from 0 (pin) to 1 (fully fixed), k<sub>rot</sub> = 3EIγ / (L(1 − γ)).</p>
+</div>
+<div class="tbl"><table>
+  <tr><th>Support scenario at ULS</th><th class="num">M1 Δf</th><th class="num">Lowest MAC</th><th class="num">True fixity N/S</th><th class="num">Found fixity N/S</th><th class="num">True k<sub>v</sub> N/S</th><th class="num">Found k<sub>v</sub> N/S</th><th class="num">Found E<sub>g</sub> change (true 0)</th></tr>
+  <tr><td>Supports unchanged</td><td class="num">−0.1 %</td><td class="num">1.000</td><td class="num">0 / 0</td><td class="num">0 / 0</td><td class="num">1 / 1</td><td class="num">1.00 / 1.00</td><td class="num">−1.7 %</td></tr>
+  <tr><td>North end half-fixed</td><td class="num">+20.3 %</td><td class="num">0.876</td><td class="num">0.50 / 0</td><td class="num">0.74 / 0</td><td class="num">1 / 1</td><td class="num">1.39 / 1.73</td><td class="num warn">−30.8 %</td></tr>
+  <tr><td>Both ends half-fixed</td><td class="num">+42.6 %</td><td class="num">0.953</td><td class="num">0.50 / 0.50</td><td class="num">0.65 / 0.39</td><td class="num">1 / 1</td><td class="num">0.89 / 1.39</td><td class="num warn">−8.3 %</td></tr>
+  <tr><td>North almost fixed, south pinned</td><td class="num">+41.2 %</td><td class="num">0.885</td><td class="num">0.90 / 0</td><td class="num">0.95 / 0</td><td class="num">1 / 1</td><td class="num">1.03 / 1.03</td><td class="num warn">−10.6 %</td></tr>
+  <tr><td>South pads twice as stiff</td><td class="num">+0.7 %</td><td class="num">0.990</td><td class="num">0 / 0</td><td class="num">0 / 0</td><td class="num">1 / 2</td><td class="num">1.20 / 1.47</td><td class="num">−1.4 %</td></tr>
+</table></div>
+<figure>
+  <img src="img/step3.png" alt="Bar charts of OMA change per support scenario, scatter of true against identified fixity, and bars of the reported girder modulus change">
+  <figcaption><b>Figure 4.</b> Left: what OMA shows at ULS for each support scenario (M1 frequency change and mode-shape change). Middle: fixity found by calibration against the true fixity (circles north, squares south; on the line = correct). Right: the girder-modulus change the calibration reports, although E<sub>g</sub> did not change.</figcaption>
+</figure>
+<div class="answer"><b>Answer to step 3.</b> A change in support fixity is very visible to OMA: one half-fixed end raises M1 by 20 % and drops the MAC to 0.88, far more than girder cracking. The calibration finds <i>which</i> end changed, but not <i>how much</i>: it overestimates the fixity and compensates with a girder-modulus drop of 8–31 % that is not real. Pad vertical stiffness is hard to identify, and beyond ULS some of the girder cracking is wrongly assigned to the pads. With 9 accelerometers, support stiffness and girder stiffness cannot be cleanly separated, which is the same trade-off seen in the supervisor's paper (E changing together with the fixities).</div>
+</section>
+
+<section>
+<div class="text">
+<h2 id="step3b">Step 3b – Bilinear rotational stiffness at the supports</h2>
+<p>The supervisor suggested a simple rule for the support rotational stiffness: <b>k<sub>1</sub></b> up to a threshold load, then <b>k<sub>2</sub> = 0.75 k<sub>1</sub></b> above it. The physical idea is the bearing under rotation: the contact stress moves to the front edge, the back unloads, and the support becomes more flexible.</p>
+<ul>
+  <li><b>Threshold</b>: a physical event. The pad's back edge unloading is never reached at Walker Road (even at 4 trucks per lane), so the first girder crack (λ = 1.87) is used as the switch.</li>
+  <li><b>k<sub>1</sub></b>: three cases. The ends as built (pad only, practically pinned), both ends half-fixed, north end half-fixed.</li>
+</ul>
+</div>
+<div class="tbl"><table>
+  <tr><th>Supports (k<sub>1</sub>)</th><th class="num">M1 Δf just above threshold, no rule</th><th class="num">with rule</th><th class="num">Extra from the rule</th><th class="num">Lowest MAC with rule</th></tr>
+  <tr><td>Ends as built (pad only)</td><td class="num">−0.03 %</td><td class="num">−0.06 %</td><td class="num">−0.03 %</td><td class="num">1.000</td></tr>
+  <tr><td>Both ends half-fixed</td><td class="num">−0.03 %</td><td class="num">−3.84 %</td><td class="num warn">−3.81 %</td><td class="num">1.000</td></tr>
+  <tr><td>North end half-fixed</td><td class="num">−0.04 %</td><td class="num">−2.26 %</td><td class="num warn">−2.23 %</td><td class="num">1.000</td></tr>
+</table></div>
+<figure>
+  <img src="img/step3b.png" alt="Frequency change and mode-shape change against load level with and without the bilinear rule, for three support cases">
+  <figcaption><b>Figure 5.</b> Bilinear rule (solid) against no rule (dashed). The magenta line is the threshold. With half-fixed ends the frequencies drop in one step at the threshold; with the ends as built nothing happens.</figcaption>
+</figure>
+<div class="text">
+<h3 id="step3c">Step 3c – Range of rules (sensitivity)</h3>
+<p>Because the values 0.75 and the threshold are not known, every combination was run: k<sub>2</sub>/k<sub>1</sub> = 0.5, 0.6, 0.75 or 0.9; threshold at SLS, 75 % ULS or ULS; softening at both ends, the north end or the south end (36 rules for each starting support).</p>
+</div>
+<div class="tbl"><table>
+  <tr><th>Starting supports (k<sub>1</sub>)</th><th class="num">M1 Δf at SLS</th><th class="num">at ULS</th><th class="num">beyond ULS</th><th class="num">Lowest MAC up to ULS</th></tr>
+  <tr><td>Pad only (as built)</td><td class="num">≈ 0 %</td><td class="num">−0.1 %</td><td class="num">−5.5 % (cracking)</td><td class="num">1.000</td></tr>
+  <tr><td>Quarter-fixed</td><td class="num">0 to −7.0 %</td><td class="num">−0.6 to −7.0 %</td><td class="num">−4.7 to −11.2 %</td><td class="num">0.993</td></tr>
+  <tr><td>Half-fixed</td><td class="num">0 to −8.7 %</td><td class="num">−0.8 to −8.8 %</td><td class="num">−4.2 to −12.3 %</td><td class="num">0.998</td></tr>
+</table></div>
+<figure>
+  <img src="img/step3c.png" alt="Ranges of frequency change and largest mode-shape change at each limit state for three starting supports">
+  <figcaption><b>Figure 6.</b> Spread of the OMA change over all 36 rules (coloured bars) against cracking alone (black dash). Bottom: the largest mode-shape change at the 9 accelerometers.</figcaption>
+</figure>
+<div class="answer"><b>Answer to steps 3b and 3c.</b> With Walker Road's supports as built, no softening rule makes a difference: the ends are already practically pinned. If the ends carried some fixity, a softening rule could lower M1 by up to 7–9 % already between SLS and ULS, far more than girder cracking. Mode shapes change much less (lowest MAC 0.993, only just beyond the measured scatter), so support softening is mainly a frequency signal.</div>
+</section>
+
+<section>
+<div class="text">
+<h2 id="step4">Step 4 – Removing the effect of the test load</h2>
+<p>To reach ULS in a real test, a heavy load must sit on the bridge, and OMA then measures the damaged bridge <i>plus</i> that mass. The mass alone changes the frequencies far more than the damage:</p>
+</div>
+<figure>
+  <img src="img/mass_vs_damage.png" alt="Frequency change for five modes; top row stiffness change only, bottom row with the test-load mass">
+  <figcaption><b>Figure 7.</b> Top row: stiffness change only (damage). Bottom row: with the mass of the test load. At λ = 1 the mass alone lowers M1 by about 12 %; at ULS by about 20 %, while the cracking contributes −0.05 %.</figcaption>
+</figure>
+<div class="text">
+<p><b>Goal</b>: recover the modes of the damaged bridge without the added mass, using only what an engineer has: the loaded OMA results, the known load (mass and position) and the calibrated undamaged model. Four corrections were tested:</p>
+<ul>
+  <li><b>Rayleigh (mass-normalised shapes)</b>: f<sub>corr</sub> = f<sub>loaded</sub> · √(1 + φᵀΔMφ), with φ the model's mass-normalised mode shape at the load positions. This is the supervisor's mass-normalised-shape idea.</li>
+  <li><b>Model ratio</b>: f<sub>corr</sub> = f<sub>loaded</sub> · f<sub>0</sub>/f<sub>mass</sub>, where the undamaged model predicts how much the mass alone shifts each mode.</li>
+  <li><b>Shape perturbation</b>: remove the first-order shape change caused by ΔM, from the model's mass-normalised modes.</li>
+  <li><b>Shape subtraction</b>: subtract the model's mass-only shape change.</li>
+</ul>
+</div>
+<div class="tbl"><table>
+  <tr><th>Limit state</th><th class="num">M1 true (no mass)</th><th class="num">M1 measured with load</th><th class="num">Error, Rayleigh</th><th class="num">Error, model ratio</th><th class="num">MAC, no correction</th><th class="num">MAC, perturbation</th><th class="num">MAC, subtraction</th></tr>
+  <tr><td>SLS</td><td class="num">−0.02 %</td><td class="num">−11.7 %</td><td class="num">−0.49 %</td><td class="num good">−0.03 %</td><td class="num">0.958</td><td class="num">0.994</td><td class="num good">1.000</td></tr>
+  <tr><td>75 % ULS</td><td class="num">−0.02 %</td><td class="num">−15.8 %</td><td class="num">−0.83 %</td><td class="num good">−0.06 %</td><td class="num">0.933</td><td class="num">0.979</td><td class="num good">1.000</td></tr>
+  <tr><td>ULS</td><td class="num">−0.05 %</td><td class="num">−19.8 %</td><td class="num">−1.20 %</td><td class="num good">−0.09 %</td><td class="num">0.907</td><td class="num">0.947</td><td class="num good">1.000</td></tr>
+  <tr><td>Beyond ULS</td><td class="num">−5.50 %</td><td class="num">−31.4 %</td><td class="num">−2.27 %</td><td class="num good">−0.45 %</td><td class="num">0.859</td><td class="num">0.814</td><td class="num good">0.988</td></tr>
+</table></div>
+<figure>
+  <img src="img/step4.png" alt="Measured, true and corrected frequencies; correction errors; and mode-shape error before and after correction against load level">
+  <figcaption><b>Figure 8.</b> Left: frequencies measured with the load on (dotted), true without the mass (thick, light) and corrected with the model ratio (dashed), which lies on the true curves. Middle: correction error; the Rayleigh correction grows with load, especially for M3. Right: mode-shape error to the true shape; model subtraction (dashed) removes almost all of it.</figcaption>
+</figure>
+<div class="answer"><b>Answer to step 4.</b> The test-load mass hides the damage, but it can be removed. Dividing out the mass effect predicted by the calibrated model recovers the true frequencies within 0.5 % and the true mode shapes (MAC ≥ 0.988) up to beyond ULS. The simpler Rayleigh correction with mass-normalised shapes works for light loads (error below 0.5 % up to about one truck per lane) but grows to 1–2.5 % for M1 and more for M3 with heavy loads, because a heavy mass also changes the mode shapes it relies on.</div>
+</section>
+
+<section class="text">
+<h2 id="conclusions">Conclusions</h2>
+<ol>
+  <li><b>At ULS Walker Road changes only slightly.</b> The girders just start to crack; the bearings neither lift, slip nor lock. The boundary conditions do not change with load.</li>
+  <li><b>OMA cannot see the onset of girder cracking at ULS.</b> Frequencies and mode shapes stay within the measurement scatter until the load goes beyond ULS. Once the load is removed, the prestress closes the cracks and most of the signal disappears again.</li>
+  <li><b>Support changes would be far more visible than cracking</b>, mostly in the frequencies. But a calibration cannot cleanly tell support stiffness from girder stiffness with 9 accelerometers: it finds the right end but reports a girder-modulus change that is not real.</li>
+  <li><b>The mass of the test load dominates loaded measurements</b>, and the calibrated model can remove it almost exactly. So OMA under load is usable if the load is known and the model is calibrated.</li>
+  <li><b>So, can OMA at service level say anything about ULS?</b> For a prestressed girder bridge like Walker Road, not by itself: the changes that matter for ULS happen too late and are partly reversible. It can still verify that the supports behave as assumed, and, under a known test load with mass correction, it can show changes once the girders crack.</li>
+</ol>
+</section>
+
+<section class="text">
+<h2 id="assumptions">Assumptions and limitations</h2>
+<ul>
+  <li><b>Prestress losses</b>: S6-19 method with RH 75 %, release at 1 day, deck at 60 days, age 31 years. The 31.9 % total is an upper estimate (gross section, no elastic gain at deck casting).</li>
+  <li><b>Cracked-section modular ratio</b> uses an in-situ E<sub>c</sub> of 1.3 × the S6 value.</li>
+  <li><b>Stiffness after unloading</b> (100 % → 84 %) comes from full-scale girder tests, not from a code.</li>
+  <li><b>Deck equivalent span</b> S<sub>e</sub> = 1.9 m (girder spacing); check S6-19 Fig. 5.3.</li>
+  <li><b>Pad rubber thickness</b> 70 mm from G·A/K<sub>s</sub> with Goodco G = 0.81 MPa (55 durometer); the drawings do not give the layers.</li>
+  <li><b>Detection limits</b>: 0.5 % for frequencies is assumed; it should be replaced by the real scatter after temperature compensation from the Walker Road data.</li>
+  <li><b>Boundary-condition identification</b> uses one noise sample per case; repeating it with many samples would give confidence intervals.</li>
+  <li><b>Model</b>: a grillage with sequential-linear updating, not a full nonlinear (fibre-section) model. The truck mass is rigidly attached (no suspension).</li>
+  <li><b>To verify in S6-19</b>: two-lane factor 0.90 (Table 3.8.4.2), dynamic allowance 0.25 (3.8.4.5.3), loss and creep/shrinkage clauses (8.7.4, 8.4.1.4–5), effective moment of inertia clause.</li>
+</ul>
+</section>
+
+<section class="text">
+<h2 id="glossary">Glossary</h2>
+<dl class="kv">
+  <dt>OMA</dt><dd>Operational modal analysis: frequencies and mode shapes identified from ambient vibration.</dd>
+  <dt>λ</dt><dd>Load level in CL-625 trucks per lane, both lanes loaded.</dd>
+  <dt>SLS / ULS</dt><dd>Serviceability / ultimate limit state.</dd>
+  <dt>MAC</dt><dd>Modal assurance criterion: 1 means two mode shapes are identical, lower means they differ.</dd>
+  <dt>I<sub>g</sub>, I<sub>cr</sub>, I<sub>e</sub></dt><dd>Gross, fully cracked and effective (CSA) moment of inertia of the composite girder.</dd>
+  <dt>Fixity factor γ</dt><dd>0 = pinned end, 1 = fully fixed end.</dd>
+  <dt>"Jacked" / stiffness only</dt><dd>The same force without the load's mass, as if applied by jacks against ground anchors.</dd>
+  <dt>Mass-normalised shape</dt><dd>A mode shape scaled so that φᵀMφ = 1; needed to compute how an added mass shifts a frequency.</dd>
+</dl>
+</section>
+
+<section class="text">
+<h2 id="files">Files and how to rerun</h2>
+<p>Repository <span class="mono">rabieehiva/Phd</span>, branch <span class="mono">claude/relaxed-knuth-1u9fhy</span>, folder <span class="mono">walker_road/</span>.</p>
+<ul>
+  <li><span class="mono">python q3_run.py</span> runs everything (about 5 minutes) and writes <span class="mono">results/Q3/</span>: the figures and <span class="mono">Q3_summary.md</span>.</li>
+  <li><span class="mono">limit_states.py</span>: prestress losses, cracking, deck, bearing checks, load levels, OMA response (step 1–2).</li>
+  <li><span class="mono">bc_identification.py</span>: support scenarios and calibration (step 3).</li>
+  <li><span class="mono">q3_rotation_rule.py</span>: bilinear rule and range of rules (steps 3b, 3c).</li>
+  <li><span class="mono">q3_load_removal.py</span>: mass correction (step 4).</li>
+  <li><span class="mono">walker_grillage.py</span>, <span class="mono">run_calibration.py</span>, <span class="mono">measured.py</span>, <span class="mono">mac_tools.py</span>: model, calibration, OMA data, sensor layout.</li>
+</ul>
+</section>
+</div>

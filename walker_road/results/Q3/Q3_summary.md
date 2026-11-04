@@ -65,8 +65,17 @@ All combinations of k2/k1 = 0.5, 0.6, 0.75, 0.9, threshold at SLS / 75 % ULS / U
 
 **Answer:** with the supports as built (pad only), no rule makes a difference – the ends are already practically pinned. If the ends carry some fixity (a quarter to a half), a softening rule can lower M1 by up to 7–9 % already at SLS/ULS (depending on α and which end), i.e. far more than girder cracking. The mode shapes at the 9 accelerometers change much less (lowest MAC 0.993 for quarter-fixed, 0.998 for half-fixed ends, up to ULS), which is only just beyond the measured MAC scatter of M1 (0.998). Support softening is therefore mainly a frequency signal, with a small mode-shape signal when one end softens more than the other.
 
-## Step 4 – Removing the load effect (next)
+## Step 4 – Removing the effect of the test load
 
-Not done yet. For reference, the test-load mass alone lowers M1 by about 12 % per truck pair (λ = 1), far more than the cracking at ULS.
+OMA measured with the test load on the bridge sees the damage AND the added mass. Corrections use only the known load (mass, position) and the calibrated undamaged model.
 
-Figures: `Q3_step1_physical_changes.png`, `Q3_step2_oma_response.png`, `Q3_step3_boundary_conditions.png`, `Q3_step3b_rotation_rule.png`, `Q3_step3c_rule_range.png`.
+| Limit state | M1 true (no mass) | M1 measured with load | error after Rayleigh | error after model ratio | MAC M1–M3 no correction | MAC perturbation | MAC model subtraction |
+|---|---|---|---|---|---|---|---|
+| SLS | -0.02 % | -11.7 % | -0.49 % | -0.03 % | 0.958 | 0.994 | 1.000 |
+| 75% ULS | -0.02 % | -15.8 % | -0.83 % | -0.06 % | 0.933 | 0.979 | 1.000 |
+| ULS | -0.05 % | -19.8 % | -1.20 % | -0.09 % | 0.907 | 0.947 | 1.000 |
+| beyond ULS | -5.50 % | -31.4 % | -2.27 % | -0.45 % | 0.859 | 0.814 | 0.988 |
+
+**Answer:** the test-load mass hides the damage (M1 about −12 % per truck pair, against −0.05 % from cracking at ULS). Dividing out the mass effect predicted by the calibrated model recovers the true frequencies within 0.5 % and the true mode shapes (MAC ≥ 0.98) up to beyond ULS. The simpler Rayleigh correction with mass-normalised shapes works for light loads (error < 0.5 % up to about one truck per lane) but grows to 1–2.5 % for heavy loads, because the heavy mass also changes the shapes.
+
+Figures: `Q3_step1_physical_changes.png`, `Q3_step2_oma_response.png`, `Q3_step3_boundary_conditions.png`, `Q3_step3b_rotation_rule.png`, `Q3_step3c_rule_range.png`, `Q3_step4_load_removal.png`.
