@@ -560,7 +560,7 @@ def main():
           f" mu R_DL = {MU_PAD * r_dl.min():.0f} kN vs K_s x 13 mm = {k_s * 0.013:.0f} kN")
 
     # secant iteration at each load level
-    lam_grid = np.arange(0.5, 12.0 + 1e-9, 0.5)
+    lam_grid = np.r_[0.25, np.arange(0.5, 12.0 + 1e-9, 0.5)]
     lams, states = [], {}
     print("\nsecant iteration (girder I_e redistributes the live load):")
     print("  lam   iters  cracked el   G1..G7 midspan M_LL (kN m)                     max M/M_r  max R (kN)"
@@ -603,6 +603,26 @@ def main():
     tsens = {n: abs(ms.TEMP_SENS[ms.MODES.index(n)]) for n in names if n in ms.MODES}
     print("\ntracked baseline modes:", list(zip(names, np.round(f_ref, 3))))
 
+    # mode tracking by continuation: every case is followed step by step in lambda, each step
+    # matched to the previous one (MAC + small frequency term, Hungarian assignment), so modes
+    # that change shape gradually or swap order keep their identity. A mode is dropped from
+    # the plots once a step-to-step MAC falls below MAC_TRACK (it has merged with another mode).
+    case_names = ("mass only", "under load", "jacked", "jacked (tangent)", "after unload")
+    prev = {c: (f_ref.copy(), np.array(sh_ref)) for c in case_names}
+    alive = {c: np.ones(N_TRACK, bool) for c in case_names}
+
+    def follow(case, fd, shd):
+        f_p, sh_p = prev[case]
+        macm = np.array([[wg.mac(a_, b_) for b_ in shd] for a_ in sh_p])
+        cost = (1 - macm) + 0.5 * np.abs(fd[None, :] - f_p[:, None]) / f_p[:, None]
+        r_, c_ = linear_sum_assignment(cost)
+        idx = c_[np.argsort(r_)]
+        mac_step = macm[np.arange(N_TRACK), idx]
+        prev[case] = (fd[idx], shd[idx])
+        alive[case] &= mac_step >= MAC_TRACK
+        mac_base = np.array([wg.mac(sh_ref[k], shd[idx[k]]) for k in range(N_TRACK)])
+        return fd[idx], shd[idx], mac_step, mac_base, alive[case].copy()
+
     rows = []
     for lam in lams:
         st = states[lam]
@@ -620,27 +640,31 @@ def main():
             p["kr"] = np.asarray(p0["kr"]) * st["f_kr"]
             return p
 
-        fd_m, sh_m, _ = deck_modes({**p0, "extra_mass": truck_mass(lam)})
-        f_m, mac_m, shp_m = track(sh_ref, fd_m, sh_m)
-        sh_m_t = [sh_m[np.argmax([wg.mac(r, s) for s in sh_m])] for r in sh_ref]
-        cases = {"mass only": (f_m, mac_m, shp_m)}
-        fd, shd, _ = deck_modes(stiff({**p0, "extra_mass": truck_mass(lam)}, "under"))
-        cases["under load"] = track(sh_m_t, fd, shd)
-        for case, key in (("jacked", "under"), ("jacked (tangent)", "tangent"), ("after unload", "after")):
-            fd, shd, _ = deck_modes(stiff(dict(p0), key))
-            cases[case] = track(sh_ref, fd, shd)
-        for case, (ft, macs, shp) in cases.items():
+        models = {"mass only": {**p0, "extra_mass": truck_mass(lam)},
+                  "under load": stiff({**p0, "extra_mass": truck_mass(lam)}, "under"),
+                  "jacked": stiff(dict(p0), "under"),
+                  "jacked (tangent)": stiff(dict(p0), "tangent"),
+                  "after unload": stiff(dict(p0), "after")}
+        res = {}
+        for case, p in models.items():
+            fd, shd, _ = deck_modes(p)
+            res[case] = follow(case, fd, shd)
+        for case, (ft, shp, mac_step, mac_base, ok) in res.items():
             df = 100 * (ft - f_ref) / f_ref
             sm = shape_metrics(sh_ref, shp)
-            row = dict(lam=lam, case=case, f=ft.tolist(), df_pct=df.tolist(), mac=macs.tolist(),
+            row = dict(lam=lam, case=case, f=ft.tolist(), df_pct=df.tolist(), mac=mac_base.tolist(),
+                       mac_step=mac_step.tolist(), tracked=ok.tolist(),
                        n_cracked_girder_el=int(st["cracked"].sum()), n_cracked_deck_el=int((st["trans"] < 0.999).sum()),
                        dT_equiv=[float(d / tsens[n]) if n in tsens else None for d, n in zip(df, names)], **sm)
             if case == "under load":
+                f_m = res["mass only"][0]
                 row["df_stiffness_pct"] = (100 * (ft - f_m) / f_m).tolist()
+                row["tracked"] = (ok & res["mass only"][4]).tolist()
             rows.append(row)
             print(f"lam {lam:5.2f} {case:18s} OMA: df% " + " ".join(f"{d:+6.2f}" for d in df[:5]) +
                   "  MAC_acc " + " ".join(f"{x:.3f}" for x in sm["mac_acc"][:3]) +
                   "  minCOMAC %.3f" % min(sm["comac_acc"]) +
+                  "  step MAC min %.3f" % mac_step[:5].min() +
                   "  | real change (strain gauges): dkappa% " +
                   " ".join(f"{x:5.1f}" for x in sm["dkappa_max_pct"][:3]))
     mac_stab = {n: float(ms.MAC_STAB[ms.MODES.index(n)]) for n in names if n in ms.MODES}
@@ -665,7 +689,7 @@ def plot(out):
     for k, n in enumerate(names):
         for row_ax, series in ((axs[0, k], top), (axs[1, k], bot)):
             for c, fld, ls in series:
-                rr = [r for r in st["rows"] if r["case"] == c and r["mac"][k] >= MAC_TRACK]
+                rr = [r for r in st["rows"] if r["case"] == c and r["tracked"][k]]
                 lab = c + (" / mass only" if fld == "df_stiffness_pct" else "")
                 row_ax.plot([r["lam"] for r in rr], [r[fld][k] for r in rr], ls, marker="o", ms=3, label=lab)
             row_ax.axhspan(-DETECT_PCT, DETECT_PCT, color="0.85", zorder=0)
@@ -686,7 +710,7 @@ def plot(out):
     for k, ax in enumerate(axs):
         n = st["names"][k]
         for c, col in (("jacked", "C0"), ("after unload", "C3")):
-            rr = [r for r in st["rows"] if r["case"] == c and r["mac"][k] >= MAC_TRACK]
+            rr = [r for r in st["rows"] if r["case"] == c and r["tracked"][k]]
             ax.semilogy([r["lam"] for r in rr], [max(1 - r["mac_acc"][k], 1e-6) for r in rr], "-o", ms=3,
                         color=col, label=f"{c}: 1 - MAC")
             ax.semilogy([r["lam"] for r in rr], [max(1 - min(r["comac_acc"]), 1e-6) for r in rr], ":", color=col,
